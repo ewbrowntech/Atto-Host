@@ -33,11 +33,16 @@ app.use("/jquery", express.static(path.join(__dirname, "node_modules/jquery")));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+// Set up basic logging and path functionality
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Enable Passport user authentication
+app.use(passport.initialize());
+
+// Enable routers
 app.use('/', indexRouter);
 app.use('/users', userRouter);
 app.use('/upload', uploadRouter); // For handling uploads to the cloud storage
