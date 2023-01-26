@@ -9,6 +9,7 @@ const passport = require('passport');
 const config = require('./config');
 // Routers
 const indexRouter = require('./routes/index');
+const userRouter = require('./routes/users');
 const uploadRouter = require('./routes/upload');
 
 // Connect to MongoDB Server
@@ -38,6 +39,7 @@ app.use(express.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/users', userRouter);
 app.use('/upload', uploadRouter); // For handling uploads to the cloud storage
 
 // If request was not forwarded via existing routes,
