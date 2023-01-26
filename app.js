@@ -1,10 +1,23 @@
+// Modules
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const logger = require('morgan');
+const mongoose = require('mongoose');
+const passport = require('passport');
+// Configuration
+const config = require('./config');
+// Routers
 const indexRouter = require('./routes/index');
-
 const uploadRouter = require('./routes/upload');
+
+// Connect to MongoDB Server
+const mongoURL = config.mongoUrl;
+mongoose.set("strictQuery", false);
+const connect = mongoose.connect(mongoURL);
+connect.then((db) => {
+  console.log("Connected correctly to the MongoDB server!");
+}, (err) => {console.log(err)});
 
 let app = express();
 
