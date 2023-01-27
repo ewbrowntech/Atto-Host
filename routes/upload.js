@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const authenticate = require('../authenticate');
 const multer = require('multer');
 
 const storage = multer.diskStorage({
@@ -25,14 +26,22 @@ const uploadRouter = express.Router();
 uploadRouter.use(bodyParser.json());
 
 uploadRouter.route('/')
-    .get((request, response, next) => {
+    .get(authenticate.verifyUser, (request, response, next) => {
         response.statusCode = 403;
         response.end('GET operation not supported on /upload');
     })
-    .post(upload.single('filename'), (request, response, next) => {
+    .post(authenticate.verifyUser, upload.single('filename'), (request, response, next) => {
         response.statusCode = 200;
         response.setHeader('Content-Type', 'application/json');
         response.json(request.file);
+    })
+    .put(authenticate.verifyUser, (request, response, next) => {
+        response.statusCode = 403;
+        response.end('PUT operation not supported on /upload');
+    })
+    .delete(authenticate.verifyUser, (request, response, next) => {
+        response.statusCode = 403;
+        response.end('DELETE operation not supported on /upload');
     });
 
 module.exports = uploadRouter;
