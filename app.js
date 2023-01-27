@@ -10,7 +10,7 @@ const config = require('./config');
 // Routers
 const indexRouter = require('./routes/index');
 const userRouter = require('./routes/users');
-const uploadRouter = require('./routes/upload');
+const fileRouter = require('./routes/files');
 
 // Connect to MongoDB Server
 const mongoURL = config.mongoUrl;
@@ -45,7 +45,7 @@ app.use(passport.initialize());
 // Enable routers
 app.use('/', indexRouter);
 app.use('/users', userRouter);
-app.use('/upload', uploadRouter); // For handling uploads to the cloud storage
+app.use('/files', fileRouter); // For handling uploads to the cloud storage
 
 // If request was not forwarded via existing routes,
 // then the requested resource does not exist (Error 404)
