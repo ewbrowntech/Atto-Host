@@ -3,6 +3,9 @@ const bodyParser = require('body-parser');
 const authenticate = require('../authenticate');
 const multer = require('multer');
 
+// Schema for file info document
+const Files = require('../models/file');
+
 const storage = multer.diskStorage({
     destination: (request, response, callback) => {
         callback(null, 'public/storage');
@@ -31,9 +34,13 @@ uploadRouter.route('/')
         response.end('GET operation not supported on /upload');
     })
     .post(authenticate.verifyToken, upload.single('filename'), (request, response, next) => {
-        response.statusCode = 200;
-        response.setHeader('Content-Type', 'application/json');
-        response.json(request.file);
+        Files.create({filename: request.file.filename, size: request.file.size, mimetype: request.file.mimetype})
+            .then((file) => {
+                console.log("File uploaded! ", file)
+                response.statusCode = 200;
+                response.setHeader('Content-Type', 'application/json');
+                response.json(request.file);
+        }, (err) => next(err)).catch((err) => next(err));
     })
     .put(authenticate.verifyToken, (request, response, next) => {
         response.statusCode = 403;
