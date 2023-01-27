@@ -5,6 +5,7 @@ const path = require('path');
 const logger = require('morgan');
 const mongoose = require('mongoose');
 const passport = require('passport');
+const authenticate = require('./authenticate');
 // Configuration
 const config = require('./config');
 // Routers
@@ -26,10 +27,15 @@ app.use("/bootstrap", express.static(path.join(__dirname, "node_modules/bootstra
 app.use("/bootstrap-social", express.static(path.join(__dirname, "node_modules/bootstrap-social")));
 app.use("/popper.js", express.static(path.join(__dirname, "node_modules/popper.js")));
 app.use("/jquery", express.static(path.join(__dirname, "node_modules/jquery")));
-app.use("/public", express.static(path.join(__dirname, 'public')));
+
+app.use("/public", express.static(path.join(__dirname, 'public'))); // Necessary to to serve CSS at endpoints
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+// Set up the serving of private html files only to authorized users
+app.all('/private/*', authenticate.verifyToken, (request, response, next) => {
+  next();
+})
+app.use('/private', express.static(path.join(__dirname, 'private')));
 
 
 // Set up view engine
