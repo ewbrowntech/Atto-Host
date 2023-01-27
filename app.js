@@ -26,6 +26,9 @@ app.use("/bootstrap", express.static(path.join(__dirname, "node_modules/bootstra
 app.use("/bootstrap-social", express.static(path.join(__dirname, "node_modules/bootstrap-social")));
 app.use("/popper.js", express.static(path.join(__dirname, "node_modules/popper.js")));
 app.use("/jquery", express.static(path.join(__dirname, "node_modules/jquery")));
+app.use("/public", express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 
 
@@ -37,7 +40,6 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Enable Passport user authentication
 app.use(passport.initialize());

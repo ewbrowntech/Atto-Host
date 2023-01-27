@@ -58,7 +58,7 @@ fileRouter.route('/upload')
 
 fileRouter.route('/:fileId')
     .get((request, response, next) => {
-
+        response.sendFile(path.join(__dirname, '..', 'public', 'filepage.html'));
     })
     .post(authenticate.verifyToken, (request, response, next) => {
         response.statusCode = 403;
