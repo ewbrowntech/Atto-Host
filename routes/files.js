@@ -4,6 +4,7 @@ const authenticate = require('../authenticate');
 const multer = require('multer');
 const mime = require('mime');
 const fs = require('fs');
+const path = require('path');
 
 // Schema for file info document
 const Files = require('../models/file');
@@ -57,7 +58,17 @@ fileRouter.route('/upload')
 
 fileRouter.route('/:fileId')
     .get((request, response, next) => {
-
+        Files.findById(request.params.fileId).then((file) => {
+            filename = file._id + "." + mime.getExtension(file.mimetype);
+            publicPath = path.resolve(__dirname, '../public/storage')
+            response.setHeader('Content-Disposition',
+                `attachment; filename=${file.filename}`); // Download the file as its original name
+            response.sendFile(filename, {root: publicPath});
+        }, (err) => {
+            if (err.name === 'CastError' && err.kind === 'ObjectId') {
+                return response.status(400).send({ message: 'Invalid ObjectId' });
+            }
+        }).catch((err) => next(err));
     })
     .post(authenticate.verifyToken, (request, response, next) => {
         response.statusCode = 403;

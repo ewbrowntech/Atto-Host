@@ -6,9 +6,6 @@ const fileSchema = new Schema({
         type: String,
         required: true
     },
-    originalname: {
-        type: String,
-    },
     size: {
         type: Number,
         required: true
