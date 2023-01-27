@@ -26,20 +26,20 @@ const uploadRouter = express.Router();
 uploadRouter.use(bodyParser.json());
 
 uploadRouter.route('/')
-    .get(authenticate.verifyUser, (request, response, next) => {
+    .get(authenticate.verifyToken, (request, response, next) => {
         response.statusCode = 403;
         response.end('GET operation not supported on /upload');
     })
-    .post(authenticate.verifyUser, upload.single('filename'), (request, response, next) => {
+    .post(authenticate.verifyToken, upload.single('filename'), (request, response, next) => {
         response.statusCode = 200;
         response.setHeader('Content-Type', 'application/json');
         response.json(request.file);
     })
-    .put(authenticate.verifyUser, (request, response, next) => {
+    .put(authenticate.verifyToken, (request, response, next) => {
         response.statusCode = 403;
         response.end('PUT operation not supported on /upload');
     })
-    .delete(authenticate.verifyUser, (request, response, next) => {
+    .delete(authenticate.verifyToken, (request, response, next) => {
         response.statusCode = 403;
         response.end('DELETE operation not supported on /upload');
     });

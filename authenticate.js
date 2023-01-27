@@ -37,4 +37,4 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts, (jwt_payload, done) => 
 }));
 
 // Verify that an incoming request is from a user that is currently logged in
-exports.verifyUser = passport.authenticate('jwt', {session: false});
+exports.verifyToken = passport.authenticate('jwt', {session: false});
