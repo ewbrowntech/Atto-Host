@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const authenticate = require('../authenticate');
 const multer = require('multer');
+const mime = require('mime');
+const fs = require('fs');
 
 // Schema for file info document
 const Files = require('../models/file');
@@ -37,6 +39,8 @@ fileRouter.route('/upload')
         Files.create({filename: request.file.filename, size: request.file.size, mimetype: request.file.mimetype})
             .then((file) => {
                 console.log("File uploaded! ", file)
+                let newPath = "public\\storage\\" + file._id + "."  + mime.getExtension(file.mimetype);
+                fs.rename(request.file.path, newPath, (err) => { if (err) next(err) });
                 response.statusCode = 200;
                 response.setHeader('Content-Type', 'application/json');
                 response.json(request.file);
@@ -50,5 +54,19 @@ fileRouter.route('/upload')
         response.statusCode = 403;
         response.end('DELETE operation not supported on /files/upload');
     });
+
+fileRouter.route('/:fileId')
+    .get((request, response, next) => {
+
+    })
+    .post(authenticate.verifyToken, (request, response, next) => {
+        response.statusCode = 403;
+        response.end('POST operation not supported on /files/:fileId');
+    })
+    .put(authenticate.verifyToken, (request, response, next) => {
+        response.statusCode = 403;
+        response.end('PUT operation not supported on /files/:fileId');
+    })
+    .delete();
 
 module.exports = fileRouter;
