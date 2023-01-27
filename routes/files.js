@@ -58,6 +58,20 @@ fileRouter.route('/upload')
 
 fileRouter.route('/:fileId')
     .get((request, response, next) => {
+
+    })
+    .post(authenticate.verifyToken, (request, response, next) => {
+        response.statusCode = 403;
+        response.end('POST operation not supported on /files/:fileId');
+    })
+    .put(authenticate.verifyToken, (request, response, next) => {
+        response.statusCode = 403;
+        response.end('PUT operation not supported on /files/:fileId');
+    })
+    .delete();
+
+fileRouter.route('/:fileId/download')
+    .get((request, response, next) => {
         Files.findById(request.params.fileId).then((file) => {
             filename = file._id + "." + mime.getExtension(file.mimetype);
             publicPath = path.resolve(__dirname, '../public/storage')
