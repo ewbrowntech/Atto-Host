@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 
 // Do not allow the upload of executable files
 const staticFileFilter = (request, file, callback) => {
-    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif|mp3|mp4)$/)) {
         return callback(new Error('You may only upload media'), null);
     }
     callback(null, true);
@@ -44,7 +44,13 @@ fileRouter.route('/upload')
                 fs.rename(request.file.path, newPath, (err) => { if (err) next(err) });
                 response.statusCode = 200;
                 response.setHeader('Content-Type', 'application/json');
-                response.json(request.file);
+                response.json({
+                    filename: request.file.originalname,
+                    mimetype: request.file.mimetype,
+                    size: request.file.size,
+                    status: "success",
+                    url: file._id
+                });
             }, (err) => next(err)).catch((err) => next(err));
     })
     .put(authenticate.verifyToken, (request, response, next) => {
