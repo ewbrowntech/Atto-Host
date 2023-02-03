@@ -6,6 +6,7 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken');
 
 const config = require('./config');
+const {response} = require("express");
 
 exports.local = passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
@@ -38,3 +39,14 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts, (jwt_payload, done) => 
 
 // Verify that an incoming request is from a user that is currently logged in
 exports.verifyToken = passport.authenticate('jwt', {session: false});
+
+exports.verifyAdmin = (request, response, next) => {
+    console.log("Username: " + request.user.username + " | Admin: " + request.user.admin);
+    if (request.user.admin !== false) {
+        next();
+    } else {
+        let err = new Error('You are not authorized to perform this operation!');
+        err.status = 403;
+        return next(err);
+    }
+}

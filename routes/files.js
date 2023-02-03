@@ -31,6 +31,27 @@ const upload = multer({storage: storage, fileFilter: staticFileFilter});
 const fileRouter = express.Router();
 fileRouter.use(bodyParser.json());
 
+fileRouter.route('/')
+    .get(authenticate.verifyToken, (request, response, next) => {
+        response.statusCode = 403;
+        response.end('GET operation not supported on /files');
+    })
+    .post(authenticate.verifyToken, (request, response, next) => {
+        response.statusCode = 403;
+        response.end('POST operation not supported on /files');
+    })
+    .put(authenticate.verifyToken, (request, response, next) => {
+        response.statusCode = 403;
+        response.end('PUT operation not supported on /files');
+    })
+    .delete(authenticate.verifyToken, authenticate.verifyAdmin, (request, response, next) => {
+        Files.remove({}).then((resp) => {
+            response.statusCode = 200;
+            response.setHeader('Content-Type', 'application/json');
+            response.json(resp);
+        }, (err) => next(err)).catch((err) => next(err));
+    })
+
 fileRouter.route('/upload')
     .get(authenticate.verifyToken, (request, response, next) => {
         response.statusCode = 403;

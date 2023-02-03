@@ -6,6 +6,10 @@ let User = new Schema({
     admin: {
         type: Boolean,
         default: false
+    },
+    automated: {
+        type: Boolean,
+        default: false
     }
 });
 
