@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const authenticate = require('../authenticate');
+const fileManagement = require('../file-management');
 const multer = require('multer');
 const mime = require('mime');
 const fs = require('fs');
@@ -49,6 +50,8 @@ fileRouter.route('/')
             response.statusCode = 200;
             response.setHeader('Content-Type', 'application/json');
             response.json(resp);
+            const storageDir = "public\\storage\\"
+            fileManagement.clearStorage(storageDir)
         }, (err) => next(err)).catch((err) => next(err));
     })
 
@@ -57,7 +60,7 @@ fileRouter.route('/upload')
         response.statusCode = 403;
         response.end('GET operation not supported on /files/upload');
     })
-    .post(authenticate.verifyToken, upload.single('filename'), (request, response, next) => {
+    .post(authenticate.verifyToken, authenticate.verifyValidity, upload.single('filename'), (request, response, next) => {
         Files.create({filename: request.file.filename, size: request.file.size, mimetype: request.file.mimetype})
             .then((file) => {
                 console.log("File uploaded! ", file)
