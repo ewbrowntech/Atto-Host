@@ -4,6 +4,7 @@ const User = require('./models/user');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const config = require('./config');
 const {response} = require("express");
@@ -43,6 +44,29 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts, (jwt_payload, done) => 
 
 // Verify that an incoming request is from a user that is currently logged in
 exports.verifyToken = passport.authenticate('jwt', {session: false});
+
+// For automated users, ensure that any perpetual JWT used is the most recently-generated JWT
+exports.verifyValidity = (request, response, next) => {
+    const token = request.headers.authorization.split(' ')[1];
+    User.findById(request.user._id).then((user) => {
+        if (!user.automated) {  // Non-automated users do not have a stored JWT to be validated
+            return next();
+        }
+        bcrypt.compare(token, user.api_key, (error, result) => {
+            if (error) {
+                console.log(error);
+                return next(error);
+            }
+            if (result == false) {
+                let err = new Error('API key is out of date.');
+                err.status = 403;
+                return next(err);
+            } else {
+                return next();
+            }
+        });
+    }, (err) => next(err)).catch((err) => next(err));
+};
 
 exports.verifyAdmin = (request, response, next) => {
     console.log("Username: " + request.user.username + " | Admin: " + request.user.admin);
