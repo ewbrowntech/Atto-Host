@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const User = require('../models/user');
 const passport = require('passport');
 const authenticate = require('../authenticate');
+const bcrypt = require('bcrypt');
 
 const router = express.Router();
 router.use(bodyParser.json());
@@ -56,10 +57,14 @@ router.post('/generate-api-key', authenticate.verifyToken, authenticate.verifyAd
     if (request.user.automated == true) {
       console.log(request.user._id);
       const token = authenticate.getPerpetualToken({_id: request.user._id});
-      User.findOneAndUpdate({_id: request.user._id}, { $set: { api_key: token }}).then((user) => {});
+      bcrypt.hash(token, 10, (err, tokenHash) => {  // Hash the token and store it in the user document
+        if (err) { return next(err) };
+        User.findOneAndUpdate({_id: request.user._id}, { $set: { api_key: tokenHash }}).then((user) => {});
+      });
       response.statusCode = 200;
       response.setHeader('Content-Type', 'application/json');
       response.json({success: true, token: token});
+
     } else {
       let err = new Error('You may not generate perpetual keys for non-automated accounts!');
       err.status = 403;
