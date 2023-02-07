@@ -13,9 +13,13 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 // Generate a new JSON Web Token upon login for use in further authenticated requests
-exports.getToken = function(user) {
-    console.log(user)
+exports.getTemporaryToken = function(user) {
     return jwt.sign(user, config.secretKey, {expiresIn: 3600});
+}
+
+// Generate a new JSON Web Token upon login for use in further authenticated requests
+exports.getPerpetualToken = function(user) {
+    return jwt.sign(user, config.secretKey);
 }
 
 // Extract JSON Web Token from Authorization header of incoming requests

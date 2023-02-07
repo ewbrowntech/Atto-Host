@@ -10,6 +10,10 @@ let User = new Schema({
     automated: {
         type: Boolean,
         default: false
+    },
+    api_key: {
+        type: String,
+        required: false
     }
 });
 
