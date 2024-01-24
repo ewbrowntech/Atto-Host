@@ -12,8 +12,7 @@ the MIT License. See the LICENSE file for more details.
 
 from fastapi import FastAPI
 
-import backend.models.models as models
-from backend.database import engine
+from backend.database import create_tables
 
 # Import routers
 from backend.routers.files import router as files_router
@@ -24,7 +23,7 @@ app.include_router(files_router, prefix="/files")
 
 @app.on_event("startup")
 async def startup():
-    await models.create_tables(engine)
+    await create_tables()
 
 
 @app.get("/")

@@ -10,14 +10,18 @@ All rights reserved. This file is part of the Atto-Host project and is released 
 the MIT License. See the LICENSE file for more details.
 """
 import pytest
+import pytest_asyncio
 from fastapi.testclient import TestClient
 from backend.app import app
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
+from backend.database import engine, Base, create_tables, drop_tables
 
 client = TestClient(app)
 
 
 @pytest.mark.asyncio
-def test_read_main():
+async def test_read_main():
     response = client.get("files/")
     assert response.status_code == 200
     assert response.json() == []

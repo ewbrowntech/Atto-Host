@@ -10,30 +10,16 @@ All rights reserved. This file is part of the Atto-Host project and is released 
 the MIT License. See the LICENSE file for more details.
 """
 import pytest
+import pytest_asyncio
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-
-ASYNC_SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
-async_engine = create_async_engine(ASYNC_SQLALCHEMY_DATABASE_URL)
-
-Base = declarative_base()
+from backend.database import engine, Base, create_tables, drop_tables
 
 
 # Fixture for setting up and tearing down the database
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function", autouse=True)
 async def async_db_session():
-    async with async_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-    # Setup for a test
-    async_session = sessionmaker(
-        async_engine, class_=AsyncSession, expire_on_commit=False
-    )
-
-    async with async_session() as session:
-        yield session  # This is where the test runs
-
+    await create_tables()
+    yield "A"
     # Teardown (reset database)
-    async with async_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+    # await drop_tables()

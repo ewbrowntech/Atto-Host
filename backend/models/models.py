@@ -13,8 +13,7 @@ the MIT License. See the LICENSE file for more details.
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String
 from sqlalchemy.ext.asyncio import AsyncEngine
-
-Base = declarative_base()
+from backend.database import Base
 
 
 async def create_tables(engine: AsyncEngine):
