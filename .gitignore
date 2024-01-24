@@ -3,3 +3,4 @@ __pycache__/
 storage/
 .env
 test.db
+atto.db

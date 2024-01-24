@@ -17,11 +17,9 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from backend.database import engine, Base, create_tables, drop_tables
 
-client = TestClient(app)
-
 
 @pytest.mark.asyncio
-async def test_read_main():
+async def test_read_main(client):
     response = client.get("files/")
     assert response.status_code == 200
     assert response.json() == []
