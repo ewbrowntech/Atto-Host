@@ -11,19 +11,26 @@ the MIT License. See the LICENSE file for more details.
 """
 
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
 
 from backend.database import create_tables
 
 # Import routers
 from backend.routers.files import router as files_router
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await create_tables()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 app.include_router(files_router, prefix="/files")
 
 
-@app.on_event("startup")
-async def startup():
-    await create_tables()
+# @app.on_event("startup")
+# async def startup():
 
 
 @app.get("/")
