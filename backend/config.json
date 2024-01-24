@@ -1,0 +1,20 @@
+{
+    "allowed_mimetypes": [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/bmp",
+        "image/svg+xml",
+        "image/tiff",
+        "image/webp",
+        "video/mp4",
+        "video/mpeg",
+        "video/ogg",
+        "video/webm",
+        "video/avi",
+        "video/mov",
+        "video/wmv",
+        "video/flv",
+        "video/mkv"
+    ]
+}

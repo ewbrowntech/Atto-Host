@@ -7,5 +7,6 @@ services:
       .env
     volumes:
       - ./backend/atto.db:/app/atto.db
+      - ./storage:/storage
     ports:
       - "8000:8000"
