@@ -11,8 +11,9 @@ the MIT License. See the LICENSE file for more details.
 """
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, Integer, DateTime
 from sqlalchemy.ext.asyncio import AsyncEngine
+from sqlalchemy.sql import func
 from backend.database import Base
 
 
@@ -24,3 +25,8 @@ async def create_tables(engine: AsyncEngine):
 class File(Base):
     __tablename__ = "files"
     id = Column(String, primary_key=True, index=True)
+    original_filename = Column(String, nullable=False, index=True)
+    filename = Column(String, nullable=False, index=True)
+    mimetype = Column(String, nullable=False, index=True)
+    size = Column(Integer, nullable=False, index=True)
+    upload_datetime = Column(DateTime, server_default=func.now())
