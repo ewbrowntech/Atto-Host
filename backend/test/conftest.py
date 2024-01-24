@@ -16,7 +16,7 @@ from sqlalchemy.orm import sessionmaker
 from backend.database import engine, Base, create_tables, drop_tables, get_db
 from backend.app import app
 
-TEST_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
+TEST_DATABASE_URL = "sqlite+aiosqlite:///./tests/test.db"
 
 
 # Fixture for creating
