@@ -27,15 +27,15 @@ Base = declarative_base()
 
 
 # Create the tables
-async def create_tables():
-    async with engine.begin() as conn:
+async def create_tables(db_engine=engine):
+    async with db_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         print("Tables created")
 
 
 # Drop all of the tables
-async def drop_tables():
-    async with engine.begin() as conn:
+async def drop_tables(db_engine=engine):
+    async with db_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         print("Tables dropped")
 

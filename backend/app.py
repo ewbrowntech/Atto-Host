@@ -13,7 +13,7 @@ the MIT License. See the LICENSE file for more details.
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from backend.database import create_tables
+from backend.database import create_tables, engine
 
 # Import routers
 from backend.routers.files import router as files_router
