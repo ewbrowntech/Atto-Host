@@ -25,7 +25,7 @@ router = APIRouter()
 
 @router.get("/")
 async def list_files(db: AsyncSession = Depends(get_db)):
-    files = await db.execute(select(File))
+    files = await db.execute(select(FileModel))
     return files.scalars().all()
 
 

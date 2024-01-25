@@ -20,6 +20,11 @@ from backend.database import engine, Base, create_tables, drop_tables
 
 @pytest.mark.asyncio
 async def test_read_main(client):
+    """
+    Test 000 - Nominal
+    Conditions: no files present
+    Result: response is empty list
+    """
     response = client.get("files/")
     assert response.status_code == 200
     assert response.json() == []
