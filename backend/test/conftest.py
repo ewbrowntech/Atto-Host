@@ -18,6 +18,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from backend.database import engine, Base, create_tables, drop_tables, get_db
 from backend.app import app
+from backend.models.models import File as FileModel
 
 TEST_DATABASE_URL = "sqlite+aiosqlite:///./test/test.db"
 TEST_STORAGE = os.path.join(os.path.dirname(__file__), "test_storage")
@@ -58,26 +59,26 @@ async def client(test_db_session):
     yield client
 
 
-# # Fixture for seeding storage directory
-# @pytest_asyncio.fixture(scope="function")
-# async def seed_storage():
-#     print("Seeding hosted test files")
-#     for filename in os.listdir(TEST_CONTENT):
-#         filepath = os.path.join(TEST_CONTENT, filename)
-#         if filename != "__init__.py" and os.path.isfile(filepath):
-#             shutil.copy(filepath, TEST_STORAGE)
-#     yield
+# Fixture for seeding storage directory
+@pytest_asyncio.fixture(scope="function")
+async def seed_storage_directory():
+    print("Seeding hosted test files")
+    for filename in os.listdir(TEST_CONTENT):
+        filepath = os.path.join(TEST_CONTENT, filename)
+        if filename != "__init__.py" and os.path.isfile(filepath):
+            shutil.copy(filepath, TEST_STORAGE)
+    yield
 
 
-# # Fixture for tearing down storage folder
-# @pytest_asyncio.fixture(scope="function")
-# async def clear_storage():
-#     yield
-#     for filename in os.listdir(TEST_STORAGE):
-#         filepath = os.path.join(TEST_STORAGE, filename)
-#         if filename != "__init__.py":
-#             os.remove(filepath)
-# print("Removing hosted test files")
+# Fixture for tearing down storage folder
+@pytest_asyncio.fixture(scope="function")
+async def clear_storage_directory():
+    yield
+    for filename in os.listdir(TEST_STORAGE):
+        filepath = os.path.join(TEST_STORAGE, filename)
+        if filename != "__init__.py":
+            os.remove(filepath)
+    print("Removing hosted test files")
 
 
 # Fixture for setting up and tearing down the database
