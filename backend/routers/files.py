@@ -20,6 +20,8 @@ from backend.database import get_db, generate_unique_id
 from backend.models.models import File as FileModel
 from backend.get_configuration import get_config
 
+from backend.packages.storage_driver.is_file_present import is_file_present
+
 router = APIRouter()
 
 
@@ -27,7 +29,19 @@ router = APIRouter()
 async def list_files(db: AsyncSession = Depends(get_db)):
     files = await db.execute(select(FileModel))
     files = files.scalars().all()
-    return files
+
+    return [
+        {
+            "id": file.id,
+            "original_filename": file.original_filename,
+            "filename": file.filename,
+            "mimetype": file.mimetype,
+            "size": file.size,
+            "upload_datetime": file.upload_datetime,
+            "is_file_available": is_file_present(file.filename),
+        }
+        for file in files
+    ]
 
 
 @router.post("/")
