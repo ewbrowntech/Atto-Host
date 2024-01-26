@@ -1,8 +1,19 @@
 # files/
 
 ### list_files() [GET files/]
-- **[000] Nominal - no files present**
-- **[001] Nominal - files present**
+- **[000] test_list_files_000_nominal_no_files_present**
+  - Conditions: Nominal - No files present in database or storage 
+  - Result: HTTP 200 - []
+- **[001] test_list_files_001_nominal_file_in_db_and_storage**
+  - Conditions: Nominal - File present in database and storage
+  - Result: HTTP 200 - [{"metadataAvailable": true, "fileAvailable": true}]
+- **[002] test_list_files_002_anomalous_file_in_db_and_not_in_storage**
+  - Conditions: Anomalous - File present in database but not in storage
+  - Result: HTTP 200 - [{"metadataAvailable": true, "fileAvailable": false}]
+- **[003] test_list_files_003_anomalous_file_not_in_db_and_in_storage**
+  - Conditions: Anomalous - File present in storage but not in database
+  - Result: HTTP 200 - []
+
 ### upload_file() [POST files/]
 ### remove_all_files() [DELETE files/]
 ### view_file() [GET files/<file_id>]
