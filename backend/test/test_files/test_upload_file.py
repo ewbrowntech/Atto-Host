@@ -53,14 +53,30 @@ async def test_upload_file_001_anomalous_no_file_included(
     monkeypatch, client, test_db_session, clear_storage_directory
 ):
     """
-    Test 001 - Nominal
-    Conditions: File of valid type included in request
-    Result: File object returned
+    Test 001 - Anomalous
+    Conditions: No file included in the request
+    Result: HTTP 422
     """
-    # Get the file to be uploaded
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
     response = client.post("files/", files={})
     assert response.status_code == 422
     detail = response.json()["detail"][0]
     assert detail["type"] == "missing"
     assert detail["loc"] == ["body", "file"]
+
+
+@pytest.mark.asyncio
+async def test_upload_file_002_anomalous_disallowed_mimetype(
+    monkeypatch, client, test_db_session, clear_storage_directory
+):
+    """
+    Test 002 - Anomalous
+    Conditions: File is of a disallowed type
+    Result: HTTP 422 - "File type not allowed"
+    """
+    monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
+    with open(os.path.join(TEST_CONTENT, "7z.exe"), "rb") as file:
+        response = client.post("files/", files={"file": ("7z.exe", file, "image/jpeg")})
+    assert response.status_code == 422
+    print(response.json()["detail"])
+    assert response.json()["detail"] == "File type application/x-dosexec not allowed"
