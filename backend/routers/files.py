@@ -21,6 +21,7 @@ from backend.models.models import File as FileModel
 from backend.get_configuration import get_config
 
 from backend.packages.storage_driver.is_file_present import is_file_present
+from backend.packages.storage_driver.get_storage_directory import get_storage_directory
 
 router = APIRouter()
 
@@ -46,36 +47,48 @@ async def list_files(db: AsyncSession = Depends(get_db)):
 
 @router.post("/")
 async def upload_file(file: UploadFile = File(...), db: AsyncSession = Depends(get_db)):
-    # Ensure a file is included in the request
-    if file is None:
-        raise HTTPException(
-            status_code=400, detail="No file was received with the request."
-        )
-    # Ensure the file is of an allowed type
-    config = get_config()
-    if file.content_type not in config["allowed_mimetypes"]:
-        raise HTTPException(status_code=400, detail="File type not allowed")
-
     try:
-        file_id = generate_unique_id()
-        extension = file.filename.split(".")[-1]
-        storage_filename = file_id + "." + extension
-        storage_path = os.path.normpath(os.path.join("/storage/", storage_filename))
-        # Save the file to the storage directory
-        with open(storage_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    # Save file information to the database
-    new_file = FileModel(
-        id=file_id,
-        mimetype=file.content_type,
-        filename=storage_filename,
-        original_filename=file.filename,
-        size=file.size,
-    )
-    db.add(new_file)
-    await db.commit()
-    await db.refresh(new_file)
+        # Ensure a file is included in the request
+        print(file.content_type)
+        if file is None:
+            raise HTTPException(
+                status_code=400, detail="No file was received with the request"
+            )
+        # Ensure the file is of an allowed type
+        config = get_config()
+        if file.content_type not in config["allowed_mimetypes"]:
+            raise HTTPException(status_code=400, detail="File type not allowed")
 
-    return {"id": file_id}
+        try:
+            file_id = generate_unique_id()
+            extension = file.filename.split(".")[-1]
+            storage_filename = file_id + "." + extension
+            storage_path = os.path.normpath(
+                os.path.join(get_storage_directory(), storage_filename)
+            )
+            # Save the file to the storage directory
+            with open(storage_path, "wb") as buffer:
+                shutil.copyfileobj(file.file, buffer)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+        # Save file information to the database
+        new_file = FileModel(
+            id=file_id,
+            mimetype=file.content_type,
+            filename=storage_filename,
+            original_filename=file.filename,
+            size=file.size,
+        )
+        db.add(new_file)
+        await db.commit()
+        await db.refresh(new_file)
+
+        return {
+            "id": new_file.id,
+            "mimetype": new_file.mimetype,
+            "filename": new_file.filename,
+            "original_filename": new_file.original_filename,
+            "size": new_file.size,
+        }
+    except Exception as e:
+        print(e)

@@ -1,5 +1,5 @@
 """
-tests/test_files.py
+tests/test_list_files.py
 
 @Author: Ethan Brown - ethan@ewbrowntech.com
 
