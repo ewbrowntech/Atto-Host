@@ -57,7 +57,14 @@ async def upload_file(file: UploadFile = File(...), db: AsyncSession = Depends(g
     # Ensure the file is of an allowed type
     config = get_config()
 
-    # Use Magic to read the file header to verify the filetype
+    # Do not allow filenames with no extension
+    split_filename = file.filename.split(".")
+    if len(split_filename) == 1:
+        raise HTTPException(status_code=422, detail=f"File type not allowed")
+    else:
+        file_extension = split_filename[-1]
+
+    # Filter out disallowed mimetypes via Magic
     mime = magic.Magic(mime=True)
     content = await file.read(2048)
     await file.seek(0)
@@ -65,6 +72,12 @@ async def upload_file(file: UploadFile = File(...), db: AsyncSession = Depends(g
     if file_type not in config["allowed_mimetypes"]:
         raise HTTPException(
             status_code=422, detail=f"File type {file_type} not allowed"
+        )
+
+    # Filter out disallowed file extensions
+    if file_extension not in config["allowed_extensions"]:
+        raise HTTPException(
+            status_code=422, detail=f"File extension .{file_extension} not allowed"
         )
 
     try:

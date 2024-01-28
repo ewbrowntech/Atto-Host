@@ -7,6 +7,11 @@
         "image/svg+xml",
         "image/tiff",
         "image/webp",
+        "audio/mpeg",
+        "audio/mpeg3",
+        "audio/x-mpeg-3",
+        "video/mpeg",
+        "video/x-mpeg",
         "video/mp4",
         "video/mpeg",
         "video/ogg",
@@ -16,5 +21,26 @@
         "video/wmv",
         "video/flv",
         "video/mkv"
+    ],
+    "allowed_extensions": [
+        "jpg",
+        "jpeg",
+        "png",
+        "gif",
+        "bmp",
+        "svg",
+        "xml",
+        "tiff",
+        "webp",
+        "mp3",
+        "mp4",
+        "mpeg",
+        "ogg",
+        "webm",
+        "avi",
+        "mov",
+        "wmv",
+        "flv",
+        "mkv"
     ]
 }
