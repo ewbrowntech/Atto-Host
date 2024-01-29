@@ -1,5 +1,6 @@
 {
     "allowed_mimetypes": [
+        "text/plain",
         "image/jpeg",
         "image/png",
         "image/gif",
@@ -23,6 +24,7 @@
         "video/mkv"
     ],
     "allowed_extensions": [
+        "txt",
         "jpg",
         "jpeg",
         "png",
@@ -42,5 +44,6 @@
         "wmv",
         "flv",
         "mkv"
-    ]
+    ],
+    "filesize_limit": 200000000
 }
