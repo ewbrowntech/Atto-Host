@@ -1,0 +1,9 @@
+{
+    "allowed_mimetypes": [
+        "image/jpeg"
+    ],
+    "allowed_extensions": [
+        "jpeg"
+    ],
+    "filesize_limit": 1000
+}

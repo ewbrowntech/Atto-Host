@@ -23,6 +23,7 @@ from backend.models.models import File as FileModel
 TEST_DATABASE_URL = "sqlite+aiosqlite:///./test/test.db"
 TEST_STORAGE = os.path.join(os.path.dirname(__file__), "test_storage")
 TEST_CONTENT = os.path.join(os.path.dirname(__file__), "test_content")
+CONFIGS = os.path.join(os.path.dirname(__file__), "configs")
 
 
 # Fixture for creating test db engine

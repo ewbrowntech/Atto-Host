@@ -14,7 +14,7 @@ import os
 import pytest
 from sqlalchemy import select
 from backend.packages.storage_driver.is_file_present import is_file_present
-from backend.test.conftest import TEST_CONTENT, TEST_STORAGE
+from backend.test.conftest import TEST_CONTENT, TEST_STORAGE, CONFIGS
 from backend.models.models import File
 
 
@@ -80,3 +80,43 @@ async def test_upload_file_002_anomalous_disallowed_mimetype(
     assert response.status_code == 422
     print(response.json()["detail"])
     assert response.json()["detail"] == "File type application/x-dosexec not allowed"
+
+
+@pytest.mark.asyncio
+async def test_upload_file_003_anomalous_disallowed_extension(monkeypatch, client):
+    """
+    Test 003 - Anomalous
+    Conditions: File is of a disallowed type
+    Result: HTTP 422 - "File type not allowed
+    """
+    monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
+    with open(os.path.join(TEST_CONTENT, "test_script.bat"), "rb") as file:
+        response = client.post(
+            "files/", files={"file": ("test_script.bat", file, "image/jpeg")}
+        )
+    assert response.status_code == 422
+    print(response.json()["detail"])
+    assert response.json()["detail"] == "File type .bat not allowed"
+
+
+@pytest.mark.asyncio
+async def test_upload_file_004_anomalous_oversized_file(monkeypatch, client):
+    """
+    Test 004 - Anomalous
+    Conditions: File size is over the allowed size
+    Result: HTTP 422 - "File size is 430061B, which exceeds the maximum allowed size of 100B"
+    """
+    monkeypatch.setenv(
+        "CONFIG_PATH", os.path.join(CONFIGS, "config_low_filesize_limit.json")
+    )
+    monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
+    with open(os.path.join(TEST_CONTENT, "test_file1.jpeg"), "rb") as file:
+        response = client.post(
+            "files/", files={"file": ("test_file1.jpeg", file, "image/jpeg")}
+        )
+    assert response.status_code == 422
+    print(response.json()["detail"])
+    assert (
+        response.json()["detail"]
+        == "File size is 430061B, which exceeds the maximum allowed size of 1000B"
+    )

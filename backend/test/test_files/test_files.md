@@ -21,12 +21,15 @@
 - **[001] test_upload_file_001_anomalous_no_file_included**
   - Conditions: No file included in request
   - Result: HTTP 400 - "No file was received with the request"
-- **[002] test_upload_file_000_disallowed_mimetype**
+- **[002] test_upload_file_002_anomalous_disallowed_mimetype**
   - Conditions: File is of a disallowed type
-  - Result: HTTP 400 - "File type not allowed"
-- **[003] test_upload_file_000_oversized_file**
-- **[004]**
-
+  - Result: HTTP 422 - "File type not allowed"
+- **[003] test_upload_file_003_anomalous_disallowed_extension**
+  - Conditions: File is of a disallowed type
+  - Result: HTTP 422 - "File type not allowed"
+- **[003] test_upload_file_000_anomalous_oversized_file**
+  - Conditions: File size is over the allowed size
+  - Result: HTTP 422 - "File is larger than the allowed size of 100MB"
 
 ### remove_all_files() [DELETE files/]
 ### view_file() [GET files/<file_id>]

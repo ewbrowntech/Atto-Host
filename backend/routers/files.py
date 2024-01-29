@@ -77,7 +77,14 @@ async def upload_file(file: UploadFile = File(...), db: AsyncSession = Depends(g
     # Filter out disallowed file extensions
     if file_extension not in config["allowed_extensions"]:
         raise HTTPException(
-            status_code=422, detail=f"File extension .{file_extension} not allowed"
+            status_code=422, detail=f"File type .{file_extension} not allowed"
+        )
+
+    # Filter out files which exceed the size limit
+    if file.size > config["filesize_limit"]:
+        raise HTTPException(
+            status_code=422,
+            detail=f"File size is {file.size}B, which exceeds the maximum allowed size of {config['filesize_limit']}B",
         )
 
     try:
