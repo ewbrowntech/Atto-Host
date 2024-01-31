@@ -118,3 +118,20 @@ async def upload_file(file: UploadFile = File(...), db: AsyncSession = Depends(g
         "original_filename": new_file.original_filename,
         "size": new_file.size,
     }
+
+
+@router.get("/{file_id}")
+async def view_file(file_id: str, db: AsyncSession = Depends(get_db)):
+    file = await db.get(FileModel, file_id)
+    if file is None:
+        raise HTTPException(status_code=404, detail="File not found")
+    file_response = {
+        "id": file.id,
+        "original_filename": file.original_filename,
+        "filename": file.filename,
+        "mimetype": file.mimetype,
+        "size": file.size,
+        "upload_datetime": file.upload_datetime,
+        "is_file_available": is_file_present(file.filename),
+    }
+    return file_response
