@@ -27,11 +27,40 @@
 - **[003] test_upload_file_003_anomalous_disallowed_extension**
   - Conditions: File is of a disallowed type
   - Result: HTTP 422 - "File type not allowed"
-- **[003] test_upload_file_000_anomalous_oversized_file**
+- **[003] test_upload_file_004_anomalous_oversized_file**
   - Conditions: File size is over the allowed size
   - Result: HTTP 422 - "File is larger than the allowed size of 100MB"
 
-### remove_all_files() [DELETE files/]
 ### view_file() [GET files/<file_id>]
-### remove_file() [DELETE files/<file_id>]
+- **[000] test_view_file_000_nominal**
+  - Conditions: File object present and file present in storage
+  - Result: HTTP 200 - \<file object\>
+- **[001] test_view_file_001_anomalous_nonexistent_file**
+  - Conditions: File object not present in database
+  - Result: HTTP 404 - File not found
+- **[002] test_view_file_002_anomalous_file_missing_in_storage**
+  - Conditions: File object present in database but file itself not in storage
+  - Result: HTTP 200 - [{"fileAvailable": false}]
+<!-- - **[003] test_view_file_003_anomalous_invalid_permissions**
+  - Conditions: User attempts to access privated file without the necessary permissions -->
+
 ### download_file() [GET files/<file_id>/download]
+- **[000] test_download_file_000_nominal_public_file**
+  - Conditions: File object present and file present in storage
+  - Result: HTTP 200 - \<File Download\>
+- **[001] test_download_file_001_anomalous_nonexistent_file**
+  - Conditions: File object is not present in database
+  - Result: HTTP 404 - File not found
+- **[002] test_download_file_002_anomalous_file_missing_in_storage**
+  - Conditions: File object in database but file itself not in storage
+  - Result: HTTP 404 - File was not found in storage
+- **[003] test_download_file_003_anomalous_exceeded_rate_limit**
+  - Conditions: User exceeded request rate limit
+  - Result: HTTP 429 - Rate limit exceeded
+<!-- - **[004] test_download_file_004_anomalous_invalid_permissions**
+  - Conditions: User attempts to access privated file without the necessary permissions
+  - Result: HTTP 403 - Insufficient permissions -->
+
+### remove_all_files() [DELETE files/]
+### prune_orphaned_files() [DELETE files/cleanup]
+### remove_file() [DELETE files/<file_id>]
