@@ -23,6 +23,7 @@ from backend.models.models import File as FileModel
 TEST_DATABASE_URL = "sqlite+aiosqlite:///./test/test.db"
 TEST_STORAGE = os.path.join(os.path.dirname(__file__), "test_storage")
 TEST_CONTENT = os.path.join(os.path.dirname(__file__), "test_content")
+TEST_DOWNLOADS = os.path.join(os.path.dirname(__file__), "test_downloads")
 CONFIGS = os.path.join(os.path.dirname(__file__), "configs")
 
 
@@ -60,6 +61,31 @@ async def client(test_db_session):
     yield client
 
 
+@pytest_asyncio.fixture(scope="function")
+async def seed_file_object(test_db_session):
+    # Seed file object to test database
+    file_object = FileModel(
+        id="abcdefgh",
+        mimetype="image/jpeg",
+        filename="abcdefgh.jpeg",
+        original_filename="test_file1.jpeg",
+        size=430061,
+    )
+    test_db_session.add(file_object)
+    await test_db_session.commit()
+    yield
+
+
+@pytest_asyncio.fixture(scope="function")
+async def seed_file_binary():
+    # Seed the file to the storage directory
+    shutil.copy(
+        os.path.join(TEST_CONTENT, "test_file1.jpeg"),
+        os.path.join(TEST_STORAGE, "abcdefgh.jpeg"),
+    )
+    yield
+
+
 # Fixture for seeding storage directory
 @pytest_asyncio.fixture(scope="function")
 async def seed_storage_directory():
@@ -77,9 +103,20 @@ async def clear_storage_directory():
     yield
     for filename in os.listdir(TEST_STORAGE):
         filepath = os.path.join(TEST_STORAGE, filename)
-        if filename != "__init__.py":
+        if filename != ".gitignore":
             os.remove(filepath)
-    print("Removing hosted test files")
+    print("Storage directory cleared")
+
+
+# Fixture for tearing down downloads folder
+@pytest_asyncio.fixture(scope="function")
+async def clear_downloads_directory():
+    yield
+    for filename in os.listdir(TEST_DOWNLOADS):
+        filepath = os.path.join(TEST_DOWNLOADS, filename)
+        if filename != ".gitignore":
+            os.remove(filepath)
+    print("Downloads directory cleared")
 
 
 # Fixture for setting up and tearing down the database

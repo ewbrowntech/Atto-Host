@@ -40,6 +40,8 @@ async def test_list_files_001_nominal_file_in_db_and_storage(
     monkeypatch,
     client,
     test_db_session,
+    seed_file_object,
+    seed_file_binary,
     clear_storage_directory,
 ):
     """
@@ -47,24 +49,6 @@ async def test_list_files_001_nominal_file_in_db_and_storage(
     Conditions: files present
     Result: [{"fileAvailable": true}]
     """
-
-    # Seed the file to the storage directory
-    shutil.copy(
-        os.path.join(TEST_CONTENT, "test_file1.jpeg"),
-        os.path.join(TEST_STORAGE, "abcdefgh.jpeg"),
-    )
-
-    # Seed file object to test database
-    file_object = FileModel(
-        id="abcdefgh",
-        mimetype="image/jpeg",
-        filename="abcdefgh.jpeg",
-        original_filename="test_file1.jpeg",
-        size=430061,
-    )
-    test_db_session.add(file_object)
-    await test_db_session.commit()
-
     # Make the request the the test client
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
     response = client.get("files/")
