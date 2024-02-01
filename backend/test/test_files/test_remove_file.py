@@ -47,8 +47,47 @@ async def test_remove_file_000_nominal_file_present(
     assert not is_file_present("abcdefgh.jpeg")
 
 
-# @pytest.mark.asyncio
-# async def test_remove_file_000_nominal_file_present(
-#     monkeypatch, client, seed_file_object, seed_file_binary, clear_storage_directory
-# ):
-#     pass
+@pytest.mark.asyncio
+async def test_download_file_001_anomalous_nonexistent_file(
+    monkeypatch, client, seed_file_binary, clear_storage_directory
+):
+    """
+    Test 001 - Anomalous
+    Conditions: File object is not present in database
+    Result: HTTP 204 - No content
+    """
+    # Make the request the the test client
+    monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
+    response = client.delete("files/abcdefgh")
+    assert response.status_code == 404
+
+    # Validate that the file binary is NOT deleted
+    assert is_file_present("abcdefgh.jpeg")
+
+
+@pytest.mark.asyncio
+async def test_remove_file_002_anomalous_file_missing_in_storage(
+    monkeypatch, client, test_db_session, seed_file_object, clear_storage_directory
+):
+    """
+    Test 002 - Anomalous
+    Conditions: File object in database but file itself not in storage
+    Result: HTTP 204 - No content
+    """
+    """
+    Test 000 - Nominal
+    Conditions: File object present and file present in storage
+    Result: HTTP 204 - No content
+    """
+    # Make the request the the test client
+    monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
+    response = client.delete("files/abcdefgh")
+    assert response.status_code == 204
+
+    # Validate that the file object has been deleted
+    files = await test_db_session.execute(select(FileModel))
+    files = files.scalars().all()
+    assert files == []
+
+    # Validate that the file itself has been deleted
+    assert not is_file_present("abcdefgh.jpeg")
