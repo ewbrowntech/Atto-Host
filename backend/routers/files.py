@@ -28,7 +28,7 @@ from backend.packages.storage_driver.get_storage_directory import get_storage_di
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("/", status_code=200)
 async def list_files(db: AsyncSession = Depends(get_db)):
     files = await db.execute(select(FileModel))
     files = files.scalars().all()
@@ -47,7 +47,7 @@ async def list_files(db: AsyncSession = Depends(get_db)):
     ]
 
 
-@router.post("/")
+@router.post("/", status_code=201)
 async def upload_file(file: UploadFile = File(...), db: AsyncSession = Depends(get_db)):
     # Ensure a file is included in the request
     if file is None:
@@ -120,7 +120,7 @@ async def upload_file(file: UploadFile = File(...), db: AsyncSession = Depends(g
     }
 
 
-@router.get("/{file_id}")
+@router.get("/{file_id}", status_code=200)
 async def view_file(file_id: str, db: AsyncSession = Depends(get_db)):
     file = await db.get(FileModel, file_id)
     if file is None:
@@ -135,3 +135,16 @@ async def view_file(file_id: str, db: AsyncSession = Depends(get_db)):
         "is_file_available": is_file_present(file.filename),
     }
     return file_response
+
+
+@router.delete("/{file_id}", status_code=204)
+async def remove_file(file_id: str, db: AsyncSession = Depends(get_db)):
+    """
+    Remove a file by its ID
+    """
+    file = await db.get(FileModel, file_id)
+    if file is None:
+        raise HTTPException(status_code=404, detail="File not found")
+    await db.delete(file)
+    await db.commit()
+    return Response(status_code=204)

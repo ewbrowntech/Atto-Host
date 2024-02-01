@@ -34,7 +34,7 @@ async def test_upload_file_000_nominal(
             "files/", files={"file": ("test_file1.jpeg", file, "image/jpeg")}
         )
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     assert response.json()["original_filename"] == "test_file1.jpeg"
 
     # Make sure the file metadata is present within the database
