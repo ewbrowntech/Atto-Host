@@ -24,6 +24,7 @@ from backend.get_configuration import get_config
 
 from backend.packages.storage_driver.is_file_present import is_file_present
 from backend.packages.storage_driver.get_storage_directory import get_storage_directory
+from backend.packages.storage_driver.delete_file import delete_file
 
 router = APIRouter()
 
@@ -145,6 +146,10 @@ async def remove_file(file_id: str, db: AsyncSession = Depends(get_db)):
     file = await db.get(FileModel, file_id)
     if file is None:
         raise HTTPException(status_code=404, detail="File not found")
+    try:
+        delete_file(file.filename)
+    except FileNotFoundError:
+        pass
     await db.delete(file)
     await db.commit()
     return Response(status_code=204)
