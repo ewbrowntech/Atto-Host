@@ -30,3 +30,4 @@ class File(Base):
     mimetype = Column(String, nullable=False, index=True)
     size = Column(Integer, nullable=False, index=True)
     upload_datetime = Column(DateTime, server_default=func.now())
+    lifetime = Column(Integer, nullable=False, index=True, default=3600)
