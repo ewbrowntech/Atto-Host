@@ -9,6 +9,7 @@ Copyright (C) 2024 by Ethan Brown
 All rights reserved. This file is part of the Atto-Host project and is released under
 the MIT License. See the LICENSE file for more details.
 """
+
 import os
 import json
 import shutil
@@ -112,7 +113,7 @@ async def test_list_files_002_anomalous_file_in_db_and_not_in_storage(
 
 @pytest.mark.asyncio
 async def test_list_files_003_anomalous_file_not_in_db_and_in_storage(
-    monkeypatch, client
+    monkeypatch, client, clear_storage_directory
 ):
     """
     Test 003 - Anomalous

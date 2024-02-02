@@ -9,13 +9,14 @@ Copyright (C) 2024 by Ethan Brown
 All rights reserved. This file is part of the Atto-Host project and is released under
 the MIT License. See the LICENSE file for more details.
 """
+
 import os
 import shutil
 
 import magic
 
 from fastapi import APIRouter, Response, Depends, File, UploadFile, HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database import get_db, generate_unique_id
@@ -119,6 +120,25 @@ async def upload_file(file: UploadFile = File(...), db: AsyncSession = Depends(g
         "original_filename": new_file.original_filename,
         "size": new_file.size,
     }
+
+
+@router.delete("/", status_code=204)
+async def remove_all_files(db: AsyncSession = Depends(get_db)):
+    try:
+        # Validate that the file object has been deleted
+        await db.execute(delete(FileModel))
+        await db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+    # Remove the files in the storage directory
+    for filename in os.listdir(get_storage_directory()):
+        filepath = os.path.join(get_storage_directory(), filename)
+        # TODO: Could run into an issue here where one of the files fails to delete.
+        # This would result in the files becoming orphaned. Think of a better solution later
+        if filename != ".gitignore":
+            os.remove(filepath)
 
 
 @router.get("/{file_id}", status_code=200)

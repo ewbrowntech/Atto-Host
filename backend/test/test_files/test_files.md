@@ -31,6 +31,8 @@
   - Conditions: File size is over the allowed size
   - Result: HTTP 422 - "File is larger than the allowed size of 100MB"
 
+### remove_all_files() [DELETE files/]
+
 ### view_file() [GET files/<file_id>]
 - **[000] test_view_file_000_nominal**
   - Conditions: File object present and file present in storage
@@ -43,6 +45,20 @@
   - Result: HTTP 200 - [{"fileAvailable": false}]
 <!-- - **[003] test_view_file_003_anomalous_invalid_permissions**
   - Conditions: User attempts to access privated file without the necessary permissions -->
+
+### remove_file() [DELETE files/<file_id>]
+- **[000] test_remove_file_000_nominal_file_present**
+  - Conditions: File object present and file present in storage
+  - Result: HTTP 204 - No content
+- **[001] test_remove_file_001_anomalous_nonexistent_file**
+  - Conditions: File object is not present in database
+  - Result: HTTP 404 - File not found
+- **[002] test_remove_file_002_anomalous_file_missing_in_storage**
+  - Conditions: File object in database but file itself not in storage
+  - Result: HTTP 204 - No content
+<!-- - **[004] test_download_file_004_anomalous_invalid_permissions**
+  - Conditions: User attempts to access privated file without the necessary permissions
+  - Result: HTTP 403 - Insufficient permissions -->
 
 ### download_file() [GET files/<file_id>/download]
 - **[000] test_download_file_000_nominal_public_file**
@@ -61,20 +77,5 @@
   - Conditions: User attempts to access privated file without the necessary permissions
   - Result: HTTP 403 - Insufficient permissions -->
 
-### remove_all_files() [DELETE files/]
 ### view_orphanted_files() [GET files/orphans]
 ### prune_orphaned_files() [DELETE files/orphans]
-
-### remove_file() [DELETE files/<file_id>]
-- **[000] test_remove_file_000_nominal_file_present**
-    - Conditions: File object present and file present in storage
-  - Result: HTTP 204 - No content
-- **[001] test_remove_file_001_anomalous_nonexistent_file**
-  - Conditions: File object is not present in database
-  - Result: HTTP 404 - File not found
-- **[002] test_remove_file_002_anomalous_file_missing_in_storage**
-  - Conditions: File object in database but file itself not in storage
-  - Result: HTTP 204 - No content
-<!-- - **[004] test_download_file_004_anomalous_invalid_permissions**
-  - Conditions: User attempts to access privated file without the necessary permissions
-  - Result: HTTP 403 - Insufficient permissions -->
