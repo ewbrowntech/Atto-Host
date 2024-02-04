@@ -34,7 +34,7 @@ async def test_get_orphaned_files_000_no_orphaned_files(
 
 
 @pytest.mark.asyncio
-async def test_get_orphaned_files_001_one_orphaned_filed(
+async def test_get_orphaned_files_001_one_orphaned_file(
     monkeypatch,
     test_db_session,
     seed_file_binary,
