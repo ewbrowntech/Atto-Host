@@ -3,14 +3,13 @@ remove_expired_files.py
 
 @Author: Ethan Brown - ethan@ewbrowntech.com
 
-Cleanup expired and orphaned files
+Cleanup expired files
 
 Copyright (C) 2024 by Ethan Brown
 All rights reserved. This file is part of the Atto-Host project and is released under
 the MIT License. See the LICENSE file for more details.
 """
 
-import os
 from datetime import datetime
 from sqlalchemy import select
 from backend.models.models import File as FileModel

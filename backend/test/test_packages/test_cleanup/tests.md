@@ -10,3 +10,11 @@
 - **[002]test_remove_expired_files_002_anomalous_expired_file_in_db_and_not_storage**
   - Condtions: There is an expired file present in the database, but its file is missing in storage
   - Result: Expired file metadata is removed form database
+
+### get_orphanted_files() [GET files/orphans]
+- **[000] test_get_orphaned_files_000_no_orphaned_files**
+  - Conditions: File in db and storage
+  - Result: orphaned_files == []
+- **[001] test_get_orphaned_files_001_one_orphaned_filed**
+  - Conditions: File not in db, but in storage
+  - Result: orphaned_files == ["abcdefgh.jpeg"]

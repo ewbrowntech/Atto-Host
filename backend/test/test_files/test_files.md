@@ -32,6 +32,18 @@
   - Result: HTTP 422 - "File is larger than the allowed size of 100MB"
 
 ### remove_all_files() [DELETE files/]
+- **[000] test_remove_all_files_000_nominal_no_files_present**
+  - Conditions: No files present in database or storage
+  - Result: HTTP 204 - No content
+- **[001] test_remove_all_files_001_nominal_files_present**
+  - Conditions: File present in database and storage
+  - Result: HTTP 204 - No Content - File removed from database and storage
+- **[002] test_remove_all_files_002_anomalous_file_in_db_and_not_in_storage**
+  - Conditions: File present in database, but not in storage
+  - Result: HTTP 204 - No Content - File removed from database
+- **[003] test_remove_all_files_003_anomalous_file_not_in_db_and_in_storage**
+  - Conditions: File present not in database, but is in storage
+  - Result: HTTP 204 - No Content - File removed from storage
 
 ### view_file() [GET files/<file_id>]
 - **[000] test_view_file_000_nominal**
@@ -69,13 +81,10 @@
   - Result: HTTP 404 - File not found
 - **[002] test_download_file_002_anomalous_file_missing_in_storage**
   - Conditions: File object in database but file itself not in storage
-  - Result: HTTP 404 - File was not found in storage
+  - Result: HTTP 404 - The requested file metadata exists, but the file binary was not found in storage
 - **[003] test_download_file_003_anomalous_exceeded_rate_limit**
   - Conditions: User exceeded request rate limit
   - Result: HTTP 429 - Rate limit exceeded
 <!-- - **[004] test_download_file_004_anomalous_invalid_permissions**
   - Conditions: User attempts to access privated file without the necessary permissions
   - Result: HTTP 403 - Insufficient permissions -->
-
-### view_orphanted_files() [GET files/orphans]
-### prune_orphaned_files() [DELETE files/orphans]
