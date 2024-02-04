@@ -18,3 +18,4 @@ async def remove_orphaned_files(db):
     orphaned_files = await get_orphaned_files(db)
     for filename in orphaned_files:
         delete_file(filename)
+    return orphaned_files

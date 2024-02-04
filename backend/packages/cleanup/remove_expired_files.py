@@ -20,6 +20,8 @@ from backend.packages.storage_driver.is_file_present import is_file_present
 async def remove_expired_files(db):
     files = await db.execute(select(FileModel))
     files = files.scalars().all()
+    # Assemble a list of the ID's of the expired files removed
+    expired_files_removed = []
     for file in files:
         # File's with a lifetime of 0 should not be subject to cleanup
         if file.lifetime <= 0:
@@ -27,9 +29,6 @@ async def remove_expired_files(db):
 
         # Calculate the file's age
         file_age = datetime.now() - file.upload_datetime
-
-        # Assemble a list of the ID's of the expired files removed
-        expired_files_removed = []
 
         # Check if the file's age exceeds its lifetime
         if file_age.total_seconds() > file.lifetime:

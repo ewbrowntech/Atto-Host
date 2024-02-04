@@ -9,6 +9,7 @@ Copyright (C) 2024 by Ethan Brown
 All rights reserved. This file is part of the Atto-Host project and is released under
 the MIT License. See the LICENSE file for more details.
 """
+
 import os
 
 
@@ -20,10 +21,10 @@ def get_storage_directory():
         )
     elif not os.path.exists(storage_directory):
         raise FileNotFoundError(
-            "The path representent by environment variable 'STORAGE_DIRECTORY' does not exist"
+            "The path representent by environment variable 'STORAGE_DIRECTORY': {storage_directory} does not exist"
         )
     elif not os.path.isdir(storage_directory):
         raise NotADirectoryError(
-            "The environment variable 'STORAGE_DIRECTORY' does not represent a directory"
+            f"The environment variable 'STORAGE_DIRECTORY': {storage_directory} does not represent a directory"
         )
     return storage_directory
