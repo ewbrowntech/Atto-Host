@@ -37,3 +37,4 @@ class User(Base):
     __tablename__ = "users"
     username = Column(String, primary_key=True, index=True, unique=True)
     hashed_password = Column(String, nullable=False)
+    hashed_token = Column(String, default=None)
