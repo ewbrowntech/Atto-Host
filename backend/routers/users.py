@@ -25,12 +25,14 @@ from passlib.context import CryptContext
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-@router.post("/register")
+@router.post("/register", status_code=201)
 async def register(user_input: UserSchema, db: AsyncSession = Depends(get_db)):
     # Check if a user already exists
     result = await db.execute(select(User).filter(User.username == user_input.username))
     if result.scalars().first() is not None:
-        raise HTTPException(status_code=400, detail=f"Username is already taken")
+        raise HTTPException(
+            status_code=400, detail=f"Username {user_input.username} is already taken"
+        )
 
     # If the username does not already exist, create a user object
     hashed_password = pwd_context.hash(user_input.password)
@@ -40,4 +42,4 @@ async def register(user_input: UserSchema, db: AsyncSession = Depends(get_db)):
     await db.refresh(user)
 
     # Return the username
-    return f"User {user.username} created."
+    return {"detail": f"User {user.username} created"}
