@@ -15,7 +15,9 @@
   - Result: ValueError("Secret key must be at least 256 bits (64 hexadecimal characters) long")
 
 ### generate_jwt()
-- **[000] test_generate_jwt_000**
-- **[000] test_generate_jwt_001_anomalous_no_username**
-- **[000] test_generate_jwt_002_anomalous_username_is_not_a_string**
-- **[000] test_generate_jwt_003**
+- **[009] test_generate_jwt_000_anomalous_no_username**
+  - Conditions: No username provided
+  - Result: ValueError("\<username\> is None")
+- **[001] test_generate_jwt_001_anomalous_username_is_not_a_string**
+  - Conditions: Provided username is an integer, not a string
+  - Result: TypeError("\<username\> must be of type \<class 'int'\>, not \<class 'int'\>")
