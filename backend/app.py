@@ -10,6 +10,8 @@ All rights reserved. This file is part of the Atto-Host project and is released 
 the MIT License. See the LICENSE file for more details.
 """
 
+import os
+import secrets
 import logging
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
@@ -18,6 +20,7 @@ from slowapi.errors import RateLimitExceeded
 
 from backend.database import create_tables, engine
 from backend.packages.cleanup.cleanup import cleanup
+from backend.packages.tokens.get_secret_key import get_secret_key
 from backend.limiter import limiter
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -38,6 +41,7 @@ logging.basicConfig(
 async def lifespan(app: FastAPI):
     await create_tables()
     await cleanup_scheduler()
+    await set_secret_key()
     yield
 
 
@@ -48,6 +52,19 @@ app.include_router(users_router, prefix="/users")
 # This is necessary to handle Rate Limit Exceeded error properly.
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+logger = logging.getLogger(__name__)
+
+
+# Validate the secret key if it is set, or create one if it is not set
+async def set_secret_key():
+    if os.environ.get("SECRET_KEY") is not None:
+        secret_key = get_secret_key()
+    else:
+        logger.info(
+            "Environment variable 'SECRET_KEY' is not set. Generating a secret key..."
+        )
+        os.environ["SECRET_KEY"] = secrets.token_hex(32)
 
 
 # Scheduler which runs the cleanup job at a given interval

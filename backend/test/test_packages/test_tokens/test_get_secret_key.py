@@ -46,12 +46,12 @@ async def test_get_secret_key_002_anomalous_secret_key_is_empty_string(monkeypat
     """
     Test 002 - Anomalous
     Conditions: Environment variable "SECRET_KEY" is an empty string
-    Result: ValueError("The environmet variable 'SECRET_KEY' is None")
+    Result: ValueError("The environmet variable 'SECRET_KEY' is an empty string")
     """
     monkeypatch.setenv("SECRET_KEY", "")
     with pytest.raises(ValueError) as e:
         secret_key = get_secret_key()
-    assert str(e.value) == "The environmet variable 'SECRET_KEY' is None"
+    assert str(e.value) == "The environment variable 'SECRET_KEY' is an empty string"
 
 
 @pytest.mark.asyncio
