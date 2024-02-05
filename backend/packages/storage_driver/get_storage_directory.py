@@ -21,10 +21,10 @@ def get_storage_directory():
         )
     elif not os.path.exists(storage_directory):
         raise FileNotFoundError(
-            "The path representent by environment variable 'STORAGE_DIRECTORY': {storage_directory} does not exist"
+            "The path representent by environment variable 'STORAGE_DIRECTORY' does not exist"
         )
     elif not os.path.isdir(storage_directory):
         raise NotADirectoryError(
-            f"The environment variable 'STORAGE_DIRECTORY': {storage_directory} does not represent a directory"
+            f"The environment variable 'STORAGE_DIRECTORY' does not represent a directory"
         )
     return storage_directory

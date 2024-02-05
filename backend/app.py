@@ -13,9 +13,12 @@ the MIT License. See the LICENSE file for more details.
 import logging
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from backend.database import create_tables, engine
 from backend.packages.cleanup.cleanup import cleanup
+from backend.limiter import limiter
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
@@ -40,9 +43,13 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.include_router(files_router, prefix="/files")
 
+# This is necessary to handle Rate Limit Exceeded error properly.
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 
 # Scheduler which runs the cleanup job at a given interval
 async def cleanup_scheduler():
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(cleanup, IntervalTrigger(seconds=10))
+    scheduler.add_job(cleanup, IntervalTrigger(minutes=5))
     scheduler.start()

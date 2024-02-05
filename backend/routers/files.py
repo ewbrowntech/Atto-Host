@@ -15,9 +15,19 @@ import shutil
 
 import magic
 
-from fastapi import APIRouter, Response, Depends, File, UploadFile, HTTPException
+from fastapi import (
+    APIRouter,
+    Request,
+    Response,
+    Depends,
+    File,
+    UploadFile,
+    HTTPException,
+)
+from fastapi.responses import FileResponse
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
+from backend.limiter import limiter
 
 from backend.database import get_db, generate_unique_id
 from backend.models.models import File as FileModel
@@ -173,3 +183,25 @@ async def remove_file(file_id: str, db: AsyncSession = Depends(get_db)):
     await db.delete(file)
     await db.commit()
     return Response(status_code=204)
+
+
+@router.get("/{file_id}/download", status_code=200)
+@limiter.limit("3/minute")
+async def download_file(
+    request: Request, file_id: str, db: AsyncSession = Depends(get_db)
+):
+    """
+    Download a file binary by its ID
+    """
+    file = await db.get(FileModel, file_id)
+    if file is None:
+        raise HTTPException(status_code=404, detail="File not found")
+    if not is_file_present(file.filename):
+        raise HTTPException(
+            status_code=404,
+            detail="The requested file metadata exists, but the file binary was not found in storage",
+        )
+    return FileResponse(
+        path=os.path.join(get_storage_directory(), file.filename),
+        filename=file.original_filename,
+    )

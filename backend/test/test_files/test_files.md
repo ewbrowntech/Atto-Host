@@ -83,7 +83,7 @@
   - Conditions: File object in database but file itself not in storage
   - Result: HTTP 404 - The requested file metadata exists, but the file binary was not found in storage
 - **[003] test_download_file_003_anomalous_exceeded_rate_limit**
-  - Conditions: User exceeded request rate limit
+  - Conditions: 4 requests made, exceeding limit of 3 requests per minute
   - Result: HTTP 429 - Rate limit exceeded
 <!-- - **[004] test_download_file_004_anomalous_invalid_permissions**
   - Conditions: User attempts to access privated file without the necessary permissions
