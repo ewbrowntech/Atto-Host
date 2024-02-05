@@ -31,3 +31,9 @@ class File(Base):
     size = Column(Integer, nullable=False, index=True)
     upload_datetime = Column(DateTime, server_default=func.now())
     lifetime = Column(Integer, nullable=False, index=True, default=3600)
+
+
+class User(Base):
+    __tablename__ = "users"
+    username = Column(String, primary_key=True, index=True, unique=True)
+    hashed_password = Column(String, nullable=False)

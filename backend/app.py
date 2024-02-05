@@ -26,6 +26,7 @@ import asyncio
 
 # Import routers
 from backend.routers.files import router as files_router
+from backend.routers.users import router as users_router
 
 # Configure logging
 logging.basicConfig(
@@ -42,6 +43,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(files_router, prefix="/files")
+app.include_router(users_router, prefix="/users")
 
 # This is necessary to handle Rate Limit Exceeded error properly.
 app.state.limiter = limiter

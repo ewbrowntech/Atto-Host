@@ -19,6 +19,8 @@ alembic = "^1.13.1"
 python-magic = "^0.4.27"
 apscheduler = "^3.10.4"
 slowapi = "^0.1.8"
+passlib = "^1.7.4"
+bcrypt = "4.0.1"
 
 
 [tool.poetry.group.dev.dependencies]
