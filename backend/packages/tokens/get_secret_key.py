@@ -19,4 +19,8 @@ def get_secret_key():
         raise EnvironmentError("The environment variable 'SECRET_KEY' is not set")
     if secret_key == "":
         raise ValueError("The environmet variable 'SECRET_KEY' is None")
+    if len(secret_key) < 64:
+        raise ValueError(
+            "Secret key must be at least 256 bits (64 hexadecimal characters) long"
+        )
     return secret_key
