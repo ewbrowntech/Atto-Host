@@ -3,4 +3,5 @@ __pycache__/
 storage/
 .env
 test.db
+test.db-journal
 atto.db

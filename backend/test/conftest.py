@@ -9,9 +9,11 @@ Copyright (C) 2024 by Ethan Brown
 All rights reserved. This file is part of the Atto-Host project and is released under
 the MIT License. See the LICENSE file for more details.
 """
+
 import os
 import shutil
 import glob
+import secrets
 import pytest
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
@@ -19,6 +21,9 @@ from sqlalchemy.orm import sessionmaker
 from backend.database import engine, Base, create_tables, drop_tables, get_db
 from backend.app import app
 from backend.models.models import File as FileModel
+from backend.models.models import User
+from backend.routers.users import pwd_context
+from backend.packages.tokens.generate_jwt import generate_jwt
 
 TEST_DATABASE_URL = "sqlite+aiosqlite:///./test/test.db"
 TEST_STORAGE = os.path.join(os.path.dirname(__file__), "test_storage")
@@ -59,6 +64,24 @@ async def client(test_db_session):
 
     client = TestClient(app)
     yield client
+
+
+@pytest_asyncio.fixture(scope="function")
+async def seed_user(monkeypatch, test_db_session):
+    test_secret_key = secrets.token_hex(32)
+    monkeypatch.setenv("SECRET_KEY", test_secret_key)
+    # Create a test user
+    hashed_password = pwd_context.hash("password")
+    user = User(username="test-user", hashed_password=hashed_password)
+    test_db_session.add(user)
+
+
+@pytest_asyncio.fixture(scope="function")
+async def seed_jwt(monkeypatch, test_db_session, seed_user):
+    jwt = generate_jwt(seed_user.username)
+    seed_user.hashed_token = pwd_context.hash(jwt)
+    await test_db_session.commit()
+    yield jwt
 
 
 @pytest_asyncio.fixture(scope="function")
