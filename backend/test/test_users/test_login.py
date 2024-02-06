@@ -35,7 +35,7 @@ def is_jwt(token):
 
 
 @pytest.mark.asyncio
-async def test_login_000_nominal(monkeypatch, client, test_db_session):
+async def test_login_000_nominal(monkeypatch, client, test_db_session, seed_user):
     """
     Test 000 - Nominal
     Conditions: Correct username and password provided
@@ -43,21 +43,17 @@ async def test_login_000_nominal(monkeypatch, client, test_db_session):
     """
     test_secret_key = secrets.token_hex(32)
     monkeypatch.setenv("SECRET_KEY", test_secret_key)
-    # Create a test user
-    hashed_password = pwd_context.hash("password")
-    user = User(username="test-user", hashed_password=hashed_password)
-    test_db_session.add(user)
 
     response = client.post(
         "users/login", json={"username": "test-user", "password": "password"}
     )
     # Refresh the user object to get the current JWT
-    await test_db_session.refresh(user)
+    await test_db_session.refresh(seed_user)
 
     assert response.status_code == 200
     jwt = response.json()
     assert is_jwt(jwt)
-    assert pwd_context.verify(jwt, user.hashed_token)
+    assert pwd_context.verify(jwt, seed_user.hashed_token)
 
 
 @pytest.mark.asyncio

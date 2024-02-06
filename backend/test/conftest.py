@@ -74,6 +74,9 @@ async def seed_user(monkeypatch, test_db_session):
     hashed_password = pwd_context.hash("password")
     user = User(username="test-user", hashed_password=hashed_password)
     test_db_session.add(user)
+    await test_db_session.commit()
+    await test_db_session.refresh(user)
+    yield user
 
 
 @pytest_asyncio.fixture(scope="function")
