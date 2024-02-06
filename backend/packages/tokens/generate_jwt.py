@@ -14,5 +14,4 @@ def generate_jwt(username: str):
         )
     payload = {"username": username}
     token = jwt.encode(payload, get_secret_key(), algorithm="HS256")
-    print(token)
     return token

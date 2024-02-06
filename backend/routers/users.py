@@ -18,6 +18,8 @@ from backend.database import get_db
 from backend.models.models import User
 from backend.schema.user import UserSchema
 
+from backend.packages.tokens.generate_jwt import generate_jwt
+
 router = APIRouter()
 
 from passlib.context import CryptContext
@@ -43,3 +45,24 @@ async def register(user_input: UserSchema, db: AsyncSession = Depends(get_db)):
 
     # Return the username
     return {"detail": f"User {user.username} created"}
+
+
+@router.post("/login", status_code=200)
+async def login(user_input: UserSchema, db: AsyncSession = Depends(get_db)):
+    # Validate the provided credentials
+    user = await db.get(User, user_input.username)
+    if user is None or not pwd_context.verify(
+        user_input.password, user.hashed_password
+    ):
+        raise HTTPException(
+            status_code=401, detail="The provided credentials were incorrect"
+        )
+
+    # Generate a JSON Web Token (JWT)
+    jwt = generate_jwt(user_input.username)
+    # Hash the JWT and store it in the user object so that the user must always the latest one generated
+    user.hashed_token = pwd_context.hash(jwt)
+    db.add(user)
+    await db.commit()
+
+    return jwt
