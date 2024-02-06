@@ -25,7 +25,7 @@
   - Result: {Pydantic error}
 - **[003] test_login_003_anomalous_nonexistent_username**
   - Conditions: Username provided does not exist
-  - Result: HTTP 401 - "Provided credentials were incorrect"
+  - Result: HTTP 401 - "The provided credentials were incorrect"
 - **[004] test_login_004_anomalous_incorrect_password**
   - Conditions: Incorrect password provided
-  - Result: HTTP 401 - "Provided credentials were incorrect"
+  - Result: HTTP 401 - "The provided credentials were incorrect"

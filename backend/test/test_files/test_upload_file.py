@@ -83,7 +83,7 @@ async def test_upload_file_002_anomalous_disallowed_mimetype(
 
 
 @pytest.mark.asyncio
-async def test_upload_file_003_anomalous_disallowed_extension(monkeypatch, client):
+async def test_upload_file_003_anomalous_disallowed_extension(monkeypatch, client, clear_storage_directory):
     """
     Test 003 - Anomalous
     Conditions: File is of a disallowed type
@@ -100,7 +100,7 @@ async def test_upload_file_003_anomalous_disallowed_extension(monkeypatch, clien
 
 
 @pytest.mark.asyncio
-async def test_upload_file_004_anomalous_oversized_file(monkeypatch, client):
+async def test_upload_file_004_anomalous_oversized_file(monkeypatch, client, clear_storage_directory):
     """
     Test 004 - Anomalous
     Conditions: File size is over the allowed size

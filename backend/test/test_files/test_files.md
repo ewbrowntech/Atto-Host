@@ -27,7 +27,7 @@
 - **[003] test_upload_file_003_anomalous_disallowed_extension**
   - Conditions: File is of a disallowed type
   - Result: HTTP 422 - "File type not allowed"
-- **[003] test_upload_file_004_anomalous_oversized_file**
+- **[004] test_upload_file_004_anomalous_oversized_file**
   - Conditions: File size is over the allowed size
   - Result: HTTP 422 - "File is larger than the allowed size of 100MB"
 
