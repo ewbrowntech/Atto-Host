@@ -29,7 +29,7 @@ async def test_get_current_user_000_nominal(
     Conditions: No JWT included
     Result: credentials_exception
     """
-    user = await get_current_user(test_db_session, token=seed_jwt)
+    user = await get_current_user(token=seed_jwt, db=test_db_session)
     assert user.username == seed_user.username
 
 
@@ -44,7 +44,7 @@ async def test_get_current_user_001_anomalous_no_jwt_provided(
     """
     monkeypatch.setenv("SECRET_KEY", secrets.token_hex(32))
     with pytest.raises(HTTPException) as e:
-        user = await get_current_user(test_db_session, token=None)
+        user = await get_current_user(token=None, db=test_db_session)
     assert str(e.value) == "401: No JWT included in request"
 
 
@@ -64,7 +64,9 @@ async def test_get_current_user_002_anomalous_jwt_indecipherable(
     ):
         with pytest.raises(HTTPException) as e:
             # Pass a dummy token; it won't be used since jwt.decode is mocked
-            user = await get_current_user(test_db_session, token="dummy.invalid.token")
+            user = await get_current_user(
+                token="dummy.invalid.token", db=test_db_session
+            )
     assert str(e.value) == "401: JWT could not be decoded"
 
 
@@ -84,7 +86,7 @@ async def test_get_current_user_003_anomalous_jwt_no_username(
     token = jwt.encode(payload, get_secret_key(), algorithm="HS256")
 
     with pytest.raises(HTTPException) as e:
-        user = await get_current_user(test_db_session, token=token)
+        user = await get_current_user(token=token, db=test_db_session)
     assert str(e.value) == "401: JWT did not include a username"
 
 
@@ -104,5 +106,5 @@ async def test_get_current_user_004_anomalous_jwt_bad_usernamee(
     token = jwt.encode(payload, get_secret_key(), algorithm="HS256")
 
     with pytest.raises(HTTPException) as e:
-        user = await get_current_user(test_db_session, token=token)
+        user = await get_current_user(token=token, db=test_db_session)
     assert str(e.value) == "401: User specified by JWT does not exist"

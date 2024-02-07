@@ -31,11 +31,14 @@ from backend.limiter import limiter
 
 from backend.database import get_db, generate_unique_id
 from backend.models.models import File as FileModel
+from backend.models.models import User
+
 from backend.get_configuration import get_config
 
 from backend.packages.storage_driver.is_file_present import is_file_present
 from backend.packages.storage_driver.get_storage_directory import get_storage_directory
 from backend.packages.storage_driver.delete_file import delete_file
+from backend.packages.tokens.get_current_user import get_current_user
 
 router = APIRouter()
 
@@ -60,7 +63,11 @@ async def list_files(db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/", status_code=201)
-async def upload_file(file: UploadFile = File(...), db: AsyncSession = Depends(get_db)):
+async def upload_file(
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
     # Ensure a file is included in the request
     if file is None:
         raise HTTPException(
@@ -188,7 +195,9 @@ async def remove_file(file_id: str, db: AsyncSession = Depends(get_db)):
 @router.get("/{file_id}/download", status_code=200)
 @limiter.limit("3/minute")
 async def download_file(
-    request: Request, file_id: str, db: AsyncSession = Depends(get_db)
+    request: Request,
+    file_id: str,
+    db: AsyncSession = Depends(get_db),
 ):
     """
     Download a file binary by its ID

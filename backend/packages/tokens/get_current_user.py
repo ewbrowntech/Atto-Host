@@ -36,7 +36,9 @@ def credentials_exception(
     )
 
 
-async def get_current_user(db, token: str = Depends(oauth2_scheme)):
+async def get_current_user(
+    token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)
+):
     if token is None:
         raise credentials_exception(detail="No JWT included in request")
     try:

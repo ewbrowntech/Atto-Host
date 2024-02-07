@@ -9,6 +9,7 @@ Copyright (C) 2024 by Ethan Brown
 All rights reserved. This file is part of the Atto-Host project and is released under
 the MIT License. See the LICENSE file for more details.
 """
+
 import mimetypes
 import os
 import pytest
@@ -20,7 +21,7 @@ from backend.models.models import File
 
 @pytest.mark.asyncio
 async def test_upload_file_000_nominal(
-    monkeypatch, client, test_db_session, clear_storage_directory
+    monkeypatch, client, test_db_session, seed_user, seed_jwt, clear_storage_directory
 ):
     """
     Test 000 - Nominal
@@ -29,9 +30,12 @@ async def test_upload_file_000_nominal(
     """
     # Get the file to be uploaded
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
+    headers = {"Authorization": f"Bearer {seed_jwt}"}
     with open(os.path.join(TEST_CONTENT, "test_file1.jpeg"), "rb") as file:
         response = client.post(
-            "files/", files={"file": ("test_file1.jpeg", file, "image/jpeg")}
+            "files/",
+            headers=headers,
+            files={"file": ("test_file1.jpeg", file, "image/jpeg")},
         )
 
     assert response.status_code == 201
@@ -83,7 +87,9 @@ async def test_upload_file_002_anomalous_disallowed_mimetype(
 
 
 @pytest.mark.asyncio
-async def test_upload_file_003_anomalous_disallowed_extension(monkeypatch, client, clear_storage_directory):
+async def test_upload_file_003_anomalous_disallowed_extension(
+    monkeypatch, client, clear_storage_directory
+):
     """
     Test 003 - Anomalous
     Conditions: File is of a disallowed type
@@ -100,7 +106,9 @@ async def test_upload_file_003_anomalous_disallowed_extension(monkeypatch, clien
 
 
 @pytest.mark.asyncio
-async def test_upload_file_004_anomalous_oversized_file(monkeypatch, client, clear_storage_directory):
+async def test_upload_file_004_anomalous_oversized_file(
+    monkeypatch, client, clear_storage_directory
+):
     """
     Test 004 - Anomalous
     Conditions: File size is over the allowed size
