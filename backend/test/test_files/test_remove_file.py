@@ -9,6 +9,7 @@ Copyright (C) 2024 by Ethan Brown
 All rights reserved. This file is part of the Atto-Host project and is released under
 the MIT License. See the LICENSE file for more details.
 """
+
 import pytest
 
 from sqlalchemy import select
@@ -24,6 +25,7 @@ async def test_remove_file_000_nominal_file_present(
     monkeypatch,
     client,
     test_db_session,
+    seed_jwt,
     seed_file_object,
     seed_file_binary,
     clear_storage_directory,
@@ -35,7 +37,8 @@ async def test_remove_file_000_nominal_file_present(
     """
     # Make the request the the test client
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
-    response = client.delete("files/abcdefgh")
+    headers = {"Authorization": f"Bearer {seed_jwt}"}
+    response = client.delete("files/abcdefgh", headers=headers)
     assert response.status_code == 204
 
     # Validate that the file object has been deleted
@@ -49,7 +52,7 @@ async def test_remove_file_000_nominal_file_present(
 
 @pytest.mark.asyncio
 async def test_download_file_001_anomalous_nonexistent_file(
-    monkeypatch, client, seed_file_binary, clear_storage_directory
+    monkeypatch, client, seed_jwt, seed_file_binary, clear_storage_directory
 ):
     """
     Test 001 - Anomalous
@@ -58,7 +61,8 @@ async def test_download_file_001_anomalous_nonexistent_file(
     """
     # Make the request the the test client
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
-    response = client.delete("files/abcdefgh")
+    headers = {"Authorization": f"Bearer {seed_jwt}"}
+    response = client.delete("files/abcdefgh", headers=headers)
     assert response.status_code == 404
 
     # Validate that the file binary is NOT deleted
@@ -67,7 +71,12 @@ async def test_download_file_001_anomalous_nonexistent_file(
 
 @pytest.mark.asyncio
 async def test_remove_file_002_anomalous_file_missing_in_storage(
-    monkeypatch, client, test_db_session, seed_file_object, clear_storage_directory
+    monkeypatch,
+    client,
+    test_db_session,
+    seed_jwt,
+    seed_file_object,
+    clear_storage_directory,
 ):
     """
     Test 002 - Anomalous
@@ -81,7 +90,8 @@ async def test_remove_file_002_anomalous_file_missing_in_storage(
     """
     # Make the request the the test client
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
-    response = client.delete("files/abcdefgh")
+    headers = {"Authorization": f"Bearer {seed_jwt}"}
+    response = client.delete("files/abcdefgh", headers=headers)
     assert response.status_code == 204
 
     # Validate that the file object has been deleted

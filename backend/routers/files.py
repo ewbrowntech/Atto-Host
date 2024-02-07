@@ -178,7 +178,11 @@ async def view_file(file_id: str, db: AsyncSession = Depends(get_db)):
 
 
 @router.delete("/{file_id}", status_code=204)
-async def remove_file(file_id: str, db: AsyncSession = Depends(get_db)):
+async def remove_file(
+    file_id: str,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
     """
     Remove a file by its ID
     """
