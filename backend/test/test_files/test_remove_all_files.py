@@ -19,7 +19,7 @@ from backend.test.conftest import TEST_STORAGE
 
 @pytest.mark.asyncio
 async def test_remove_all_files_000_nominal_no_files_present(
-    monkeypatch, client, test_db_session
+    monkeypatch, client, test_db_session, seed_jwt
 ):
     """
     Test 000 - Nominal
@@ -27,7 +27,8 @@ async def test_remove_all_files_000_nominal_no_files_present(
     Result: HTTP 204 - No content - Nothing happens
     """
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
-    response = client.delete("files/")
+    headers = {"Authorization": f"Bearer {seed_jwt}"}
+    response = client.delete("files/", headers=headers)
 
     assert response.status_code == 204
 
@@ -43,6 +44,7 @@ async def test_remove_all_files_001_nominal_files_present(
     monkeypatch,
     client,
     test_db_session,
+    seed_jwt,
     seed_file_object,
     seed_file_binary,
     clear_storage_directory,
@@ -53,7 +55,8 @@ async def test_remove_all_files_001_nominal_files_present(
     Result: HTTP 204 - No Content - File removed from database and storage
     """
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
-    response = client.delete("files/")
+    headers = {"Authorization": f"Bearer {seed_jwt}"}
+    response = client.delete("files/", headers=headers)
     assert response.status_code == 204
     # Validate that the file table is empty
     files = await test_db_session.execute(select(FileModel))
@@ -67,6 +70,7 @@ async def test_remove_all_files_002_anomalous_file_in_db_and_not_in_storage(
     monkeypatch,
     client,
     test_db_session,
+    seed_jwt,
     seed_file_object,
     clear_storage_directory,
 ):
@@ -76,7 +80,8 @@ async def test_remove_all_files_002_anomalous_file_in_db_and_not_in_storage(
     Result: HTTP 204 - No Content - File removed from database
     """
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
-    response = client.delete("files/")
+    headers = {"Authorization": f"Bearer {seed_jwt}"}
+    response = client.delete("files/", headers=headers)
     assert response.status_code == 204
     # Validate that the file table is empty
     files = await test_db_session.execute(select(FileModel))
@@ -90,6 +95,7 @@ async def test_remove_all_files_003_anomalous_file_not_in_db_and_in_storage(
     monkeypatch,
     client,
     test_db_session,
+    seed_jwt,
     seed_file_binary,
     clear_storage_directory,
 ):
@@ -99,7 +105,8 @@ async def test_remove_all_files_003_anomalous_file_not_in_db_and_in_storage(
     Result: HTTP 204 - No Content - File removed from storage
     """
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
-    response = client.delete("files/")
+    headers = {"Authorization": f"Bearer {seed_jwt}"}
+    response = client.delete("files/", headers=headers)
     assert response.status_code == 204
     # Validate that the file table is empty
     files = await test_db_session.execute(select(FileModel))

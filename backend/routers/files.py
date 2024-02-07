@@ -140,7 +140,9 @@ async def upload_file(
 
 
 @router.delete("/", status_code=204)
-async def remove_all_files(db: AsyncSession = Depends(get_db)):
+async def remove_all_files(
+    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+):
     try:
         # Validate that the file object has been deleted
         await db.execute(delete(FileModel))
