@@ -44,6 +44,9 @@
 - **[003] test_remove_all_files_003_anomalous_file_not_in_db_and_in_storage**
   - Conditions: File present not in database, but is in storage
   - Result: HTTP 204 - No Content - File removed from storage
+- **[004] test_remove_all_files_004_anomalous_user_not_admin**
+  - Conditions: User is not an admin
+  - Result: HTTP 403 - Forbidden
 
 ### view_file() [GET files/<file_id>]
 - **[000] test_view_file_000_nominal**
@@ -59,18 +62,21 @@
   - Conditions: User attempts to access privated file without the necessary permissions -->
 
 ### remove_file() [DELETE files/<file_id>]
-- **[000] test_remove_file_000_nominal_file_present**
-  - Conditions: File object present and file present in storage
+- **[000] test_remove_file_000_nominal_file_present_owner**
+  - Conditions: File object present and file present in storage, request is from file owner
   - Result: HTTP 204 - No content
-- **[001] test_remove_file_001_anomalous_nonexistent_file**
+- **[000] test_remove_file_001_nominal_file_present_admin**
+  - Conditions: File object present and file present in storage, request is from admin
+  - Result: HTTP 204 - No content
+- **[002] test_remove_file_002_anomalous_nonexistent_file**
   - Conditions: File object is not present in database
   - Result: HTTP 404 - File not found
-- **[002] test_remove_file_002_anomalous_file_missing_in_storage**
+- **[003] test_remove_file_003_anomalous_file_missing_in_storage**
   - Conditions: File object in database but file itself not in storage
   - Result: HTTP 204 - No content
-<!-- - **[004] test_download_file_004_anomalous_invalid_permissions**
-  - Conditions: User attempts to access privated file without the necessary permissions
-  - Result: HTTP 403 - Insufficient permissions -->
+- **[004] test_remove_file_004_anomalous_file_insufficient_priveledges**
+  - Conditions: The requester is neither the file owner nor an admin
+  - Result: HTTP 403 - "The current user is not authorized to perform this action"
 
 ### download_file() [GET files/<file_id>/download]
 - **[000] test_download_file_000_nominal_public_file**

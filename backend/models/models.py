@@ -10,7 +10,7 @@ All rights reserved. This file is part of the Atto-Host project and is released 
 the MIT License. See the LICENSE file for more details.
 """
 
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey
+from sqlalchemy import Column, String, Integer, Boolean, DateTime, ForeignKey
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.sql import func
 from backend.database import Base
@@ -40,4 +40,5 @@ class User(Base):
     username = Column(String, primary_key=True, index=True, unique=True)
     hashed_password = Column(String, nullable=False)
     hashed_token = Column(String, default=None)
+    is_admin = Column(Boolean, default=False)
     files = relationship("File", back_populates="owner")

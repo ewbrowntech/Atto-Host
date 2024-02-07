@@ -152,6 +152,8 @@ async def upload_file(
 async def remove_all_files(
     db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
 ):
+    if not user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required")
     try:
         # Validate that the file object has been deleted
         await db.execute(delete(FileModel))
@@ -195,9 +197,19 @@ async def remove_file(
     """
     Remove a file by its ID
     """
-    file = await db.get(FileModel, file_id)
+    # Save the file to the user's files
+    stmt = (
+        select(FileModel).options(selectinload(FileModel.owner)).filter_by(id=file_id)
+    )
+    result = await db.execute(stmt)
+    file = result.scalars().first()
     if file is None:
         raise HTTPException(status_code=404, detail="File not found")
+    if user != file.owner and not user.is_admin:
+        raise HTTPException(
+            status_code=403,
+            detail="The current user is not authorized to perform this action",
+        )
     try:
         delete_file(file.filename)
     except FileNotFoundError:

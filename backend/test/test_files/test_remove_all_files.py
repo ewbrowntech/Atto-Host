@@ -19,7 +19,7 @@ from backend.test.conftest import TEST_STORAGE
 
 @pytest.mark.asyncio
 async def test_remove_all_files_000_nominal_no_files_present(
-    monkeypatch, client, test_db_session, seed_jwt
+    monkeypatch, client, test_db_session, seed_admin_jwt
 ):
     """
     Test 000 - Nominal
@@ -27,7 +27,7 @@ async def test_remove_all_files_000_nominal_no_files_present(
     Result: HTTP 204 - No content - Nothing happens
     """
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
-    headers = {"Authorization": f"Bearer {seed_jwt}"}
+    headers = {"Authorization": f"Bearer {seed_admin_jwt}"}
     response = client.delete("files/", headers=headers)
 
     assert response.status_code == 204
@@ -44,7 +44,7 @@ async def test_remove_all_files_001_nominal_files_present(
     monkeypatch,
     client,
     test_db_session,
-    seed_jwt,
+    seed_admin_jwt,
     seed_file_object,
     seed_file_binary,
     clear_storage_directory,
@@ -55,7 +55,7 @@ async def test_remove_all_files_001_nominal_files_present(
     Result: HTTP 204 - No Content - File removed from database and storage
     """
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
-    headers = {"Authorization": f"Bearer {seed_jwt}"}
+    headers = {"Authorization": f"Bearer {seed_admin_jwt}"}
     response = client.delete("files/", headers=headers)
     assert response.status_code == 204
     # Validate that the file table is empty
@@ -70,7 +70,7 @@ async def test_remove_all_files_002_anomalous_file_in_db_and_not_in_storage(
     monkeypatch,
     client,
     test_db_session,
-    seed_jwt,
+    seed_admin_jwt,
     seed_file_object,
     clear_storage_directory,
 ):
@@ -80,7 +80,7 @@ async def test_remove_all_files_002_anomalous_file_in_db_and_not_in_storage(
     Result: HTTP 204 - No Content - File removed from database
     """
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
-    headers = {"Authorization": f"Bearer {seed_jwt}"}
+    headers = {"Authorization": f"Bearer {seed_admin_jwt}"}
     response = client.delete("files/", headers=headers)
     assert response.status_code == 204
     # Validate that the file table is empty
@@ -95,7 +95,7 @@ async def test_remove_all_files_003_anomalous_file_not_in_db_and_in_storage(
     monkeypatch,
     client,
     test_db_session,
-    seed_jwt,
+    seed_admin_jwt,
     seed_file_binary,
     clear_storage_directory,
 ):
@@ -105,7 +105,7 @@ async def test_remove_all_files_003_anomalous_file_not_in_db_and_in_storage(
     Result: HTTP 204 - No Content - File removed from storage
     """
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
-    headers = {"Authorization": f"Bearer {seed_jwt}"}
+    headers = {"Authorization": f"Bearer {seed_admin_jwt}"}
     response = client.delete("files/", headers=headers)
     assert response.status_code == 204
     # Validate that the file table is empty
@@ -113,3 +113,30 @@ async def test_remove_all_files_003_anomalous_file_not_in_db_and_in_storage(
     files = files.scalars().all()
     assert files == []
     assert not is_file_present("abcdefgh.jpeg")
+
+
+@pytest.mark.asyncio
+async def test_remove_all_files_004_anomalous_user_not_admin(
+    monkeypatch,
+    client,
+    test_db_session,
+    seed_jwt,
+    seed_file_object,
+    seed_file_binary,
+    clear_storage_directory,
+):
+    """
+    Test 004 - Anomalous
+    Conditions: User is not an admin
+    Result: HTTP 403 - Forbidden
+    """
+    monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
+    headers = {"Authorization": f"Bearer {seed_jwt}"}
+    response = client.delete("files/", headers=headers)
+    assert response.status_code == 403
+    assert response.json()["detail"] == "Admin privileges required"
+    # Validate that the file table is empty
+    files = await test_db_session.execute(select(FileModel))
+    files = files.scalars().all()
+    assert len(files) == 1
+    assert is_file_present("abcdefgh.jpeg")
