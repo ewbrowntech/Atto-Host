@@ -14,14 +14,16 @@ import mimetypes
 import os
 import pytest
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
+
 from backend.packages.storage_driver.is_file_present import is_file_present
 from backend.test.conftest import TEST_CONTENT, TEST_STORAGE, CONFIGS
-from backend.models.models import File
+from backend.models.models import File, User
 
 
 @pytest.mark.asyncio
 async def test_upload_file_000_nominal(
-    monkeypatch, client, test_db_session, seed_jwt, clear_storage_directory
+    monkeypatch, client, test_db_session, seed_user, seed_jwt, clear_storage_directory
 ):
     """
     Test 000 - Nominal
@@ -45,11 +47,26 @@ async def test_upload_file_000_nominal(
     query = select(File).where(File.original_filename == "test_file1.jpeg")
     result = await test_db_session.execute(query)
     file_objects = result.scalars().all()
+    # Validate that only one object was created in the database
     assert len(file_objects) == 1
-    file_info = file_objects[0]
-    assert file_info.mimetype == "image/jpeg"
-    assert file_info.size == 430061
-    assert is_file_present(file_info.filename)
+    file = file_objects[0]
+    # Validate that the content type was correctly determined
+    assert file.mimetype == "image/jpeg"
+    # Validate that the whole of the content was correctly processed
+    assert file.size == 430061
+    # Validate that the file binary was saved to stroage
+    assert is_file_present(file.filename)
+
+    # Eaglerly load the user's files
+    stmt = (
+        select(User)
+        .options(selectinload(User.files))
+        .filter_by(username=seed_user.username)
+    )
+    result = await test_db_session.execute(stmt)
+    user = result.scalars().first()
+    # Validate that the file object has been correctly associated with its author
+    assert file in user.files
 
 
 @pytest.mark.asyncio

@@ -27,6 +27,8 @@ from fastapi import (
 from fastapi.responses import FileResponse
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
 from backend.limiter import limiter
 
 from backend.database import get_db, generate_unique_id
@@ -126,7 +128,14 @@ async def upload_file(
         original_filename=file.filename,
         size=file.size,
     )
-    db.add(new_file)
+
+    # Save the file to the user's files
+    stmt = (
+        select(User).options(selectinload(User.files)).filter_by(username=user.username)
+    )
+    result = await db.execute(stmt)
+    user = result.scalars().first()
+    user.files.append(new_file)
     await db.commit()
     await db.refresh(new_file)
 
