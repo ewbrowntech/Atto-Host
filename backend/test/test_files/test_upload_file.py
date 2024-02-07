@@ -21,7 +21,7 @@ from backend.models.models import File
 
 @pytest.mark.asyncio
 async def test_upload_file_000_nominal(
-    monkeypatch, client, test_db_session, seed_user, seed_jwt, clear_storage_directory
+    monkeypatch, client, test_db_session, seed_jwt, clear_storage_directory
 ):
     """
     Test 000 - Nominal
@@ -54,7 +54,7 @@ async def test_upload_file_000_nominal(
 
 @pytest.mark.asyncio
 async def test_upload_file_001_anomalous_no_file_included(
-    monkeypatch, client, test_db_session, clear_storage_directory
+    monkeypatch, client, test_db_session, seed_jwt, clear_storage_directory
 ):
     """
     Test 001 - Anomalous
@@ -62,7 +62,8 @@ async def test_upload_file_001_anomalous_no_file_included(
     Result: HTTP 422
     """
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
-    response = client.post("files/", files={})
+    headers = {"Authorization": f"Bearer {seed_jwt}"}
+    response = client.post("files/", headers=headers, files={})
     assert response.status_code == 422
     detail = response.json()["detail"][0]
     assert detail["type"] == "missing"
@@ -71,7 +72,7 @@ async def test_upload_file_001_anomalous_no_file_included(
 
 @pytest.mark.asyncio
 async def test_upload_file_002_anomalous_disallowed_mimetype(
-    monkeypatch, client, test_db_session, clear_storage_directory
+    monkeypatch, client, seed_jwt, clear_storage_directory
 ):
     """
     Test 002 - Anomalous
@@ -80,7 +81,10 @@ async def test_upload_file_002_anomalous_disallowed_mimetype(
     """
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
     with open(os.path.join(TEST_CONTENT, "7z.exe"), "rb") as file:
-        response = client.post("files/", files={"file": ("7z.exe", file, "image/jpeg")})
+        headers = {"Authorization": f"Bearer {seed_jwt}"}
+        response = client.post(
+            "files/", headers=headers, files={"file": ("7z.exe", file, "image/jpeg")}
+        )
     assert response.status_code == 422
     print(response.json()["detail"])
     assert response.json()["detail"] == "File type application/x-dosexec not allowed"
@@ -88,7 +92,7 @@ async def test_upload_file_002_anomalous_disallowed_mimetype(
 
 @pytest.mark.asyncio
 async def test_upload_file_003_anomalous_disallowed_extension(
-    monkeypatch, client, clear_storage_directory
+    monkeypatch, client, seed_jwt, clear_storage_directory
 ):
     """
     Test 003 - Anomalous
@@ -97,8 +101,11 @@ async def test_upload_file_003_anomalous_disallowed_extension(
     """
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
     with open(os.path.join(TEST_CONTENT, "test_script.bat"), "rb") as file:
+        headers = {"Authorization": f"Bearer {seed_jwt}"}
         response = client.post(
-            "files/", files={"file": ("test_script.bat", file, "image/jpeg")}
+            "files/",
+            headers=headers,
+            files={"file": ("test_script.bat", file, "image/jpeg")},
         )
     assert response.status_code == 422
     print(response.json()["detail"])
@@ -107,7 +114,7 @@ async def test_upload_file_003_anomalous_disallowed_extension(
 
 @pytest.mark.asyncio
 async def test_upload_file_004_anomalous_oversized_file(
-    monkeypatch, client, clear_storage_directory
+    monkeypatch, client, seed_jwt, clear_storage_directory
 ):
     """
     Test 004 - Anomalous
@@ -119,8 +126,11 @@ async def test_upload_file_004_anomalous_oversized_file(
     )
     monkeypatch.setenv("STORAGE_PATH", TEST_STORAGE)
     with open(os.path.join(TEST_CONTENT, "test_file1.jpeg"), "rb") as file:
+        headers = {"Authorization": f"Bearer {seed_jwt}"}
         response = client.post(
-            "files/", files={"file": ("test_file1.jpeg", file, "image/jpeg")}
+            "files/",
+            headers=headers,
+            files={"file": ("test_file1.jpeg", file, "image/jpeg")},
         )
     assert response.status_code == 422
     print(response.json()["detail"])
