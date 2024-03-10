@@ -8,8 +8,10 @@ Atto-Host is a distributed file-sharing service designed to be as lightweight as
 
 ## Startup
 
-    docker-compose up --build
+    chmod +x startup.sh
+    
+    ./startup.sh
 
 ## Shutdown
 
-    docker-compose down
+    docker-compose down -v
