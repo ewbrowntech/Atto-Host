@@ -11,8 +11,8 @@ the MIT License. See the LICENSE file for more details.
 """
 
 import pytest
-from backend.packages.cleanup.get_orphaned_files import get_orphaned_files
-from backend.test.conftest import TEST_STORAGE
+from app.packages.cleanup.get_orphaned_files import get_orphaned_files
+from test.conftest import TEST_STORAGE
 
 
 @pytest.mark.asyncio

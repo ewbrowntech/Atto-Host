@@ -12,9 +12,9 @@ the MIT License. See the LICENSE file for more details.
 
 from datetime import datetime
 from sqlalchemy import select
-from backend.models.models import File as FileModel
-from backend.packages.storage_driver.delete_file import delete_file
-from backend.packages.storage_driver.is_file_present import is_file_present
+from app.models.models import File as FileModel
+from app.packages.storage_driver.delete_file import delete_file
+from app.packages.storage_driver.is_file_present import is_file_present
 
 
 async def remove_expired_files(db):

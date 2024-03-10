@@ -11,9 +11,9 @@ the MIT License. See the LICENSE file for more details.
 """
 
 import logging
-from backend.packages.cleanup.remove_expired_files import remove_expired_files
-from backend.packages.cleanup.remove_orphaned_files import remove_orphaned_files
-from backend.database import get_db
+from app.packages.cleanup.remove_expired_files import remove_expired_files
+from app.packages.cleanup.remove_orphaned_files import remove_orphaned_files
+from app.database import get_db
 
 logger = logging.getLogger(__name__)
 

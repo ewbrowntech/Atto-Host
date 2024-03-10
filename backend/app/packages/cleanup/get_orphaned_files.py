@@ -12,8 +12,8 @@ the MIT License. See the LICENSE file for more details.
 
 import os
 from sqlalchemy import select
-from backend.models.models import File as FileModel
-from backend.packages.storage_driver.get_storage_directory import get_storage_directory
+from app.models.models import File as FileModel
+from app.packages.storage_driver.get_storage_directory import get_storage_directory
 
 
 async def get_orphaned_files(db):

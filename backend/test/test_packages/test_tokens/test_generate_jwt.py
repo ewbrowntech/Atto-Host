@@ -12,7 +12,7 @@ the MIT License. See the LICENSE file for more details.
 
 import pytest
 import secrets
-from backend.packages.tokens.generate_jwt import generate_jwt
+from app.packages.tokens.generate_jwt import generate_jwt
 
 
 @pytest.mark.asyncio

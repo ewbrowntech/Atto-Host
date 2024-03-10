@@ -1,10 +1,9 @@
 [tool.poetry]
-name = "atto-host"
+name = "app"
 version = "0.1.0"
 description = ""
 authors = ["Ethan Brown <ethan@ewbrowntech.com>"]
 license = "MIT"
-readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -30,7 +29,6 @@ black = "^23.12.1"
 pytest-cov = "^4.1.0"
 pytest = "^7.4.4"
 pytest-asyncio = "^0.23.3"
-python-magic-bin = "^0.4.14"
 
 [build-system]
 requires = ["poetry-core"]

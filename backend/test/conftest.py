@@ -19,12 +19,12 @@ import pytest_asyncio
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, selectinload
-from backend.database import engine, Base, create_tables, drop_tables, get_db
-from backend.app import app
-from backend.models.models import File as FileModel
-from backend.models.models import User
-from backend.routers.users import pwd_context
-from backend.packages.tokens.generate_jwt import generate_jwt
+from app.database import engine, Base, create_tables, drop_tables, get_db
+from app.app import app
+from app.models.models import File as FileModel
+from app.models.models import User
+from app.routers.users import pwd_context
+from app.packages.tokens.generate_jwt import generate_jwt
 
 TEST_DATABASE_URL = "sqlite+aiosqlite:///./test/test.db"
 TEST_STORAGE = os.path.join(os.path.dirname(__file__), "test_storage")

@@ -14,7 +14,7 @@ RUN poetry config virtualenvs.create false \
 EXPOSE 8000
 
 # Copy the rest of your application's code
-COPY .. /app/backend
+COPY . /app
 
 # Set the command to run your application
-CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0"]
+CMD ["uvicorn", "app.app:app", "--host", "0.0.0.0"]

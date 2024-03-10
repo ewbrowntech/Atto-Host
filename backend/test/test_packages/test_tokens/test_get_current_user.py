@@ -16,8 +16,8 @@ from unittest.mock import patch
 import secrets
 from fastapi import HTTPException
 from jose import JWTError
-from backend.packages.tokens.get_secret_key import get_secret_key
-from backend.packages.tokens.get_current_user import get_current_user
+from app.packages.tokens.get_secret_key import get_secret_key
+from app.packages.tokens.get_current_user import get_current_user
 
 
 @pytest.mark.asyncio
@@ -59,7 +59,7 @@ async def test_get_current_user_002_anomalous_jwt_indecipherable(
     """
     monkeypatch.setenv("SECRET_KEY", secrets.token_hex(32))
     with patch(
-        "backend.packages.tokens.get_current_user.jwt.decode",
+        "app.packages.tokens.get_current_user.jwt.decode",
         side_effect=JWTError("Invalid token"),
     ):
         with pytest.raises(HTTPException) as e:

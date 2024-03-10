@@ -9,6 +9,7 @@ Copyright (C) 2024 by Ethan Brown
 All rights reserved. This file is part of the Atto-Host project and is released under
 the MIT License. See the LICENSE file for more details.
 """
+
 import os
 import json
 
@@ -17,7 +18,9 @@ def get_config():
     config_path = os.environ.get("CONFIG_PATH")
     # If a config_path is not specified in the environment variables, use the default config
     if config_path is None:
-        config_path = os.path.join(os.path.dirname(__file__), "config.json")
+        config_path = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), "config.json"
+        )
     elif not os.path.exists(config_path):
         raise FileNotFoundError(f"Config file was not found at {config_path}")
     elif not os.path.isfile(config_path):

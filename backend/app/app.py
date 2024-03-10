@@ -18,18 +18,18 @@ from contextlib import asynccontextmanager
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
-from backend.database import create_tables, engine
-from backend.packages.cleanup.cleanup import cleanup
-from backend.packages.tokens.get_secret_key import get_secret_key
-from backend.limiter import limiter
+from app.database import create_tables, engine
+from app.packages.cleanup.cleanup import cleanup
+from app.packages.tokens.get_secret_key import get_secret_key
+from app.limiter import limiter
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 import asyncio
 
 # Import routers
-from backend.routers.files import router as files_router
-from backend.routers.users import router as users_router
+from app.routers.files import router as files_router
+from app.routers.users import router as users_router
 
 # Configure logging
 logging.basicConfig(

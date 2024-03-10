@@ -14,11 +14,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.database import get_db
-from backend.models.models import User
-from backend.schema.user import UserSchema
+from app.database import get_db
+from app.models.models import User
+from app.schema.user import UserSchema
 
-from backend.packages.tokens.generate_jwt import generate_jwt
+from app.packages.tokens.generate_jwt import generate_jwt
 
 router = APIRouter()
 

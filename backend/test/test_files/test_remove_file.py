@@ -14,10 +14,10 @@ import pytest
 
 from sqlalchemy import select
 
-from backend.models.models import File as FileModel
-from backend.packages.storage_driver.is_file_present import is_file_present
+from app.models.models import File as FileModel
+from app.packages.storage_driver.is_file_present import is_file_present
 
-from backend.test.conftest import TEST_STORAGE
+from test.conftest import TEST_STORAGE
 
 
 @pytest.mark.asyncio

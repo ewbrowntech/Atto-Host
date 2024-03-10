@@ -12,8 +12,8 @@ the MIT License. See the LICENSE file for more details.
 
 import pytest
 import re
-from backend.models.models import File as FileModel
-from backend.test.conftest import TEST_CONTENT, TEST_STORAGE, TEST_DOWNLOADS
+from app.models.models import File as FileModel
+from test.conftest import TEST_CONTENT, TEST_STORAGE, TEST_DOWNLOADS
 
 
 @pytest.mark.asyncio

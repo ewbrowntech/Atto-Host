@@ -11,9 +11,9 @@ the MIT License. See the LICENSE file for more details.
 """
 
 import pytest
-from backend.packages.storage_driver.is_file_present import is_file_present
-from backend.packages.cleanup.remove_orphaned_files import remove_orphaned_files
-from backend.test.conftest import TEST_STORAGE
+from app.packages.storage_driver.is_file_present import is_file_present
+from app.packages.cleanup.remove_orphaned_files import remove_orphaned_files
+from test.conftest import TEST_STORAGE
 
 
 @pytest.mark.asyncio

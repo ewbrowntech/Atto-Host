@@ -16,9 +16,9 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from backend.packages.storage_driver.is_file_present import is_file_present
-from backend.test.conftest import TEST_CONTENT, TEST_STORAGE, CONFIGS
-from backend.models.models import File, User
+from app.packages.storage_driver.is_file_present import is_file_present
+from test.conftest import TEST_CONTENT, TEST_STORAGE, CONFIGS
+from app.models.models import File, User
 
 
 @pytest.mark.asyncio

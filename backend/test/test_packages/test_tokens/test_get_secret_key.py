@@ -13,7 +13,7 @@ the MIT License. See the LICENSE file for more details.
 import pytest
 import os
 import secrets
-from backend.packages.tokens.get_secret_key import get_secret_key
+from app.packages.tokens.get_secret_key import get_secret_key
 
 
 @pytest.mark.asyncio

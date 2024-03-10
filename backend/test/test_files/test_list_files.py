@@ -11,17 +11,14 @@ the MIT License. See the LICENSE file for more details.
 """
 
 import os
-import json
 import shutil
 import pytest
-import pytest_asyncio
 from fastapi.testclient import TestClient
-from backend.app import app
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
-from backend.database import engine, Base, create_tables, drop_tables
-from backend.models.models import File as FileModel
-from backend.test.conftest import TEST_CONTENT, TEST_STORAGE
+from app.database import engine, Base, create_tables, drop_tables
+from app.models.models import File as FileModel
+from test.conftest import TEST_CONTENT, TEST_STORAGE
 
 
 @pytest.mark.asyncio

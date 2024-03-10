@@ -12,11 +12,11 @@ the MIT License. See the LICENSE file for more details.
 
 import pytest
 from sqlalchemy import select
-from backend.models.models import File as FileModel
+from app.models.models import File as FileModel
 from datetime import datetime, timedelta
-from backend.packages.storage_driver.is_file_present import is_file_present
-from backend.packages.cleanup.remove_expired_files import remove_expired_files
-from backend.test.conftest import TEST_STORAGE
+from app.packages.storage_driver.is_file_present import is_file_present
+from app.packages.cleanup.remove_expired_files import remove_expired_files
+from test.conftest import TEST_STORAGE
 
 
 @pytest.mark.asyncio

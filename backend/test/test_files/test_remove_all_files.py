@@ -12,9 +12,9 @@ the MIT License. See the LICENSE file for more details.
 
 import pytest
 from sqlalchemy import select
-from backend.packages.storage_driver.is_file_present import is_file_present
-from backend.models.models import File as FileModel
-from backend.test.conftest import TEST_STORAGE
+from app.packages.storage_driver.is_file_present import is_file_present
+from app.models.models import File as FileModel
+from test.conftest import TEST_STORAGE
 
 
 @pytest.mark.asyncio

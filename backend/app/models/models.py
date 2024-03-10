@@ -13,7 +13,7 @@ the MIT License. See the LICENSE file for more details.
 from sqlalchemy import Column, String, Integer, Boolean, DateTime, ForeignKey
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.sql import func
-from backend.database import Base
+from app.database import Base
 from sqlalchemy.orm import relationship
 
 

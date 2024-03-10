@@ -15,8 +15,8 @@ from passlib.context import CryptContext
 import base64
 import secrets
 
-from backend.models.models import User
-from backend.routers.users import pwd_context
+from app.models.models import User
+from app.routers.users import pwd_context
 
 
 # Determine if a string is a JWT

@@ -19,9 +19,9 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from jose import JWTError
 
-from backend.database import get_db
-from backend.models.models import User
-from backend.packages.tokens.get_secret_key import get_secret_key
+from app.database import get_db
+from app.models.models import User
+from app.packages.tokens.get_secret_key import get_secret_key
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 

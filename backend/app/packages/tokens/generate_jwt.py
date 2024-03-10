@@ -1,7 +1,7 @@
 import os
 import jwt
 import datetime
-from backend.packages.tokens.get_secret_key import get_secret_key
+from app.packages.tokens.get_secret_key import get_secret_key
 
 
 def generate_jwt(username: str):
