@@ -12,4 +12,4 @@ Atto-Host is a distributed file-sharing service designed to be as lightweight as
 
 ## Shutdown
 
-    docker-compose down
+    
