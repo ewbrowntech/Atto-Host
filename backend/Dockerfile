@@ -16,5 +16,11 @@ EXPOSE 8000
 # Copy the rest of your application's code
 COPY . /app
 
-# Set the command to run your application
+# Give execution rights to the entrypoint script
+RUN chmod +x entrypoint.sh
+
+# Apply the available migrations to the databse
+ENTRYPOINT ["/app/entrypoint.sh"]
+
+# Command to run the FastAPI app
 CMD ["uvicorn", "app.app:app", "--host", "0.0.0.0"]

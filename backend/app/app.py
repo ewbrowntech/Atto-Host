@@ -18,7 +18,6 @@ from contextlib import asynccontextmanager
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
-from app.database import create_tables, engine
 from app.packages.cleanup.cleanup import cleanup
 from app.packages.tokens.get_secret_key import get_secret_key
 from app.limiter import limiter
@@ -39,7 +38,6 @@ logging.basicConfig(
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await create_tables()
     await cleanup_scheduler()
     await set_secret_key()
     yield

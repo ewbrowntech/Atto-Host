@@ -56,7 +56,7 @@ async def test_db_session(test_db_engine):
 
 
 @pytest_asyncio.fixture(scope="function")
-async def client(test_db_session):
+async def client(monkeypatch, test_db_session):
     # Override the app's dependency to use the test database
     async def override_get_db():
         yield test_db_session
@@ -65,6 +65,7 @@ async def client(test_db_session):
 
     from fastapi.testclient import TestClient
 
+    monkeypatch.setenv("TEST_ENV", "true")
     client = TestClient(app)
     yield client
 
